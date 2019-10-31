@@ -222,16 +222,34 @@ component {
 
 	public array function getAdHocRegions() {
 		var result = [
-			 {"_id":"us-territories", "type":"usregion", "geoID":[4796775,4566966,5880801,4043988], "label":"US Territories"}
-			,{"_id":"southwest", "type":"usregion", "geoID":[4736286,5551752,5481136,5509151], "label":"Southwest States"}
-			,{"_id":"southeast", "type":"usregion", "geoID":[4197000,4482348,4155751,6254928,4597040], "label":"Southeast States"}
-			,{"_id":"plains", "type":"usregion", "geoID":[4544379,4273857,5769223,5073708,5690763], "label":"Plains States"}
-			,{"_id":"pacific", "type":"usregion", "geoID":[5815135,5744337,5332921,5879092,5855797], "label":"Pacific States"}
-			,{"_id":"new-england", "type":"usregion", "geoID":[6254926,4831725,4971068,5090174,5224323,5242283], "label":"New England States"}
-			,{"_id":"mountain", "type":"usregion", "geoID":[5549030,5417618,5596512,5667009,5843591], "label":"Mountain States"}
-			,{"_id":"midwest", "type":"usregion", "geoID":[5165418,5001836,4921868,5279468,5037779,4896861,4862182], "label":"Midwest States"}
-			,{"_id":"midsouth", "type":"usregion", "geoID":[4662168,4099753,4398678,4829764,4331987,6254925,4436296], "label":"Midsouth States"}
-			,{"_id":"middle-atlantic", "type":"usregion", "geoID":[5101760,4361885,4826850,4142224,5128638,6254927], "label":"Middle Atlantic States"}
+			 {"_id":"us-territories", "type":"usregion-old", "geoID":[4796775,4566966,5880801,4043988], "label":"US Territories"}
+			,{"_id":"southwest", "type":"usregion-old", "geoID":[4736286,5551752,5481136,5509151], "label":"Southwest States"}
+			,{"_id":"southeast", "type":"usregion-old", "geoID":[4197000,4482348,4155751,6254928,4597040], "label":"Southeast States"}
+			,{"_id":"plains", "type":"usregion-old", "geoID":[4544379,4273857,5769223,5073708,5690763], "label":"Plains States"}
+			,{"_id":"pacific", "type":"usregion-old", "geoID":[5815135,5744337,5332921,5879092,5855797], "label":"Pacific States"}
+			,{"_id":"new-england", "type":"usregion-old", "geoID":[6254926,4831725,4971068,5090174,5224323,5242283], "label":"New England States"}
+			,{"_id":"mountain", "type":"usregion-old", "geoID":[5549030,5417618,5596512,5667009,5843591], "label":"Mountain States"}
+			,{"_id":"midwest", "type":"usregion-old", "geoID":[5165418,5001836,4921868,5279468,5037779,4896861,4862182], "label":"Midwest States"}
+			,{"_id":"midsouth", "type":"usregion-old", "geoID":[4662168,4099753,4398678,4829764,4331987,6254925,4436296], "label":"Midsouth States"}
+			,{"_id":"middle-atlantic", "type":"usregion-old", "geoID":[5101760,4361885,4826850,4142224,5128638,6254927], "label":"Middle Atlantic States"}
+			
+			// new, larger us regions
+			,{"_id":"us/western-states", "type":"usregion", "geoID":[5879092,5332921,5855797,5815135,5744337,5509151,5549030,5417618,5551752,5481136], "label":"Western States"}
+			,{"_id":"us/plains-states", "type":"usregion", "geoID":[5596512,4862182,4273857,5037779,5667009,5073708,5690763,4544379,5769223,4736286,5843591], "label":"Plains States"}
+			,{"_id":"us/midwest-states", "type":"usregion", "geoID":[4896861,4921868,6254925,5001836,4398678,5165418,5279468], "label":"Midwest States"}
+			,{"_id":"us/northeast-states", "type":"usregion", "geoID":[4831725,4142224,4971068,4361885,6254926,5090174,5101760,5128638,6254927,5224323,5242283], "label":"Northeast States"}
+			,{"_id":"us/southeast-states", "type":"usregion", "geoID":[4829764,4099753,4138106,4155751,4197000,4331987,4436296,4482348,4597040,4662168,6254928,4826850], "label":"Southeast States"}
+
+			// UK regions
+			,{"_id":"uk/north-west-england","geoID":["3333126","3333127","3333128","3333136","2647601","3333179","3333188","3333202","3333208","3333219","7290536","7290537","3333190","2651712","3333162","2644974","3333167","3333169","3333220","3333192","3333201","3333211","3333216"],"type":"ukregion","label":"North West England"}
+			,{"_id":"uk/yorkshire-and-the-humber","geoID":["3333122","3333131","3333137","3333164","3333212","3333159","2633351","3333143","2650345","3333161","3333175","3333176","2641209","3333189","3333193"],"type":"ukregion","label":"Yorkshire and The Humber"}
+			,{"_id":"uk/west-midlands","geoID":["3333125","3333139","3333144","2647071","3333191","2638655","3333195","2637141","3333204","3333209","3333213","2634723","3333222","2633560"],"type":"ukregion","label":"West Midlands"}
+			,{"_id":"uk/north-east-england","geoID":["2641238","2650629","3333141","2648772","3333152","3333172","3333174","2641235","3333186","3333199","3333203","3333205"],"type":"ukregion","label":"North East England"}
+			,{"_id":"uk/east-of-england","geoID":["7290534","2635885","2653940","7290535","2649889","2647043","3333168","2641455","3333180","3333197","2636561"],"type":"ukregion","label":"East of England"}
+			,{"_id":"uk/south-west-england","geoID":["3333123","3333207","3333210","3333129","3333134","2652355","2651292","2651079","2648402","2638384","3333177","3333181","3333182","2637532","3333198","2633868"],"type":"ukregion","label":"South West England"}
+			,{"_id":"uk/south-east-england","geoID":["3333130","3333133","2654408","2650328","2647554","2646007","3333158","3333170","3333173","2640726","3333183","3333184","2633840","3333194","3333196","2636512","3333217","2634258","3333221"],"type":"ukregion","label":"South East England"}
+			,{"_id":"uk/east-midlands","geoID":["3333165","3333142","2651346","2638918","2644667","2644486","2641429","3333178","2641169"],"type":"ukregion","label":"East Midlands"}
+
 			,{"_id":"central-america", "type":"other", "geoID":[3582678,3624060,3585968,3595528,3608932,3617476,3703430], "label":"Central America"}
 			,{"_id":"baltic", "type":"other", "geoID":[597427,458258,453733], "label":"Baltic"}
 			,{"_id":"east-asia", "type":"other", "geoID":[1814991,1861060,1873107,1835841,1668284,1819730,1821275], "label":"East Asia"}
