@@ -239,6 +239,9 @@ component {
 			,{"_id":"us/midwest-states", "type":"usregion", "geoID":[4896861,4921868,6254925,5001836,4398678,5165418,5279468], "label":"Midwest States"}
 			,{"_id":"us/northeast-states", "type":"usregion", "geoID":[4831725,4142224,4971068,4361885,6254926,5090174,5101760,5128638,6254927,5224323,5242283], "label":"Northeast States"}
 			,{"_id":"us/southeast-states", "type":"usregion", "geoID":[4829764,4099753,4138106,4155751,4197000,4331987,4436296,4482348,4597040,4662168,6254928,4826850], "label":"Southeast States"}
+			
+			// CA regions
+			,{"_id":"ca/northwest-territories-nunavut-yukon", "type":"caregion", "geoID":[6091069,6091732,6185811], "label":"Northwest Territories, Nunavut, and Yukon"}
 
 			// UK regions
 			,{"_id":"uk/north-west-england","geoID":["3333126","3333127","3333128","3333136","2647601","3333179","3333188","3333202","3333208","3333219","7290536","7290537","3333190","2651712","3333162","2644974","3333167","3333169","3333220","3333192","3333201","3333211","3333216"],"type":"ukregion","label":"North West England"}
