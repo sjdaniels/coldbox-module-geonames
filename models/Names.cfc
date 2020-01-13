@@ -221,7 +221,7 @@ component output="false" entityname="GeoNames" collection="geo_names" extends="m
 		}
 		// Admin2: Admin2 name, Admin1 Abbr if US, UK, CA, i.e., "York County, ME". Admin2 name, country name for all other.
 		// City: Same as Admin2.		
-		if (["admin2","city"].find(this.getType())) {
+		if (["admin2","city","region"].find(this.getType())) {
 			if (arguments.lang=="en" && this.getType()=="admin2")
 				result = this.getAscii(); // so we get the version with "County" appended
 
