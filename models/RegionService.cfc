@@ -252,10 +252,7 @@ component {
 			,{"_id":"uk/south-west-england","geoID":[3333123,3333207,3333210,3333129,3333134,2652355,2651292,2651079,2648402,2638384,3333177,3333181,3333182,2637532,3333198,2633868],"type":"ukregion","label":"South West England"}
 			,{"_id":"uk/south-east-england","geoID":[3333130,3333133,2654408,2650328,2647554,2646007,3333158,3333170,3333173,2640726,3333183,3333184,2633840,3333194,3333196,2636512,3333217,2634258,3333221],"type":"ukregion","label":"South East England"}
 			,{"_id":"uk/east-midlands","geoID":[3333165,3333142,2651346,2638918,2644667,2644486,2641429,3333178,2641169],"type":"ukregion","label":"East Midlands"}
-			// overwrite the "country" slugs with these as regions
-			,{"_id":"scotland","geoID":[2638360,2638360],"type":"ukregion","label":"Scotland"}
-			,{"_id":"wales","geoID":[2634895,2634895],"type":"ukregion","label":"Wales"}
-			,{"_id":"northern-ireland","geoID":[2641364,2641364],"type":"ukregion","label":"Northern Ireland"}
+			,{"_id":"uk/greater-london","geoID":[2648110,2648110],"type":"ukregion","label":"Greater London"}
 
 			,{"_id":"central-america", "type":"other", "geoID":[3582678,3624060,3585968,3595528,3608932,3617476,3703430], "label":"Central America"}
 			,{"_id":"baltic", "type":"other", "geoID":[597427,458258,453733], "label":"Baltic"}
