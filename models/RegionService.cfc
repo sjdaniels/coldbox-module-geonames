@@ -237,8 +237,8 @@ component {
 			,{"_id":"us/western-states", "type":"usregion", "geoID":[5879092,5332921,5855797,5815135,5744337,5509151,5549030,5417618,5551752,5481136], "label":"Western States", "labelAlt":"Western US"}
 			,{"_id":"us/plains-states", "type":"usregion", "geoID":[5596512,4862182,4273857,5037779,5667009,5073708,5690763,4544379,5769223,4736286,5843591], "label":"Plains States", "labelAlt":"Plains US"}
 			,{"_id":"us/midwest-states", "type":"usregion", "geoID":[4896861,4921868,6254925,5001836,4398678,5165418,5279468], "label":"Midwest States", "labelAlt":"Midwest US"}
-			,{"_id":"us/northeast-states", "type":"usregion", "geoID":[4831725,4142224,4971068,4361885,6254926,5090174,5101760,5128638,6254927,5224323,5242283], "label":"Northeast States", "labelAlt":"Northeast US"}
-			,{"_id":"us/southeast-states", "type":"usregion", "geoID":[4829764,4099753,4138106,4155751,4197000,4331987,4436296,4482348,4597040,4662168,6254928,4826850], "label":"Southeast States", "labelAlt":"Southeast US"}
+			,{"_id":"us/northeast-states", "type":"usregion", "geoID":[4831725,4142224,4138106,4971068,4361885,6254926,5090174,5101760,5128638,6254927,5224323,5242283], "label":"Northeast States", "labelAlt":"Northeast US"}
+			,{"_id":"us/southeast-states", "type":"usregion", "geoID":[4829764,4099753,4155751,4197000,4331987,4436296,4482348,4597040,4662168,6254928,4826850], "label":"Southeast States", "labelAlt":"Southeast US"}
 			
 			// CA regions
 			,{"_id":"ca/northwest-territories-nunavut-yukon", "type":"caregion", "geoID":[6091069,6091732,6185811], "label":"Northwest Territories, Nunavut, and Yukon"}
