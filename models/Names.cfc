@@ -214,7 +214,7 @@ component output="false" entityname="GeoNames" collection="geo_names" extends="m
 		}
 		// Admin1: Admin1 name if US, CA, UK, i.e. "Maine". Otherwise, "Admin1, Country"
 		if (this.getType()=="admin1") {
-			if (["US","CA","GB"].find(this.getCountryCode())) {
+			if (["US","CA"].find(this.getCountryCode())) {
 				return result;
 			}
 			return result & ", " & this.getNameByType("country",arguments.lang);
@@ -225,7 +225,7 @@ component output="false" entityname="GeoNames" collection="geo_names" extends="m
 			if (arguments.lang=="en" && this.getType()=="admin2")
 				result = this.getAscii(); // so we get the version with "County" appended
 
-			if (["US","CA","GB"].find(this.getCountryCode())) {
+			if (["US","CA"].find(this.getCountryCode())) {
 				local.parent = this.getCollection().findOne( {"_id":this.getPath()[4]} );
 				return result & ", " & (local.parent.abbr ?: (local.parent.name[arguments.lang] ?: local.parent.name["en"]));
 			}
