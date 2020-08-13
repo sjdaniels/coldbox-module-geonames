@@ -1,15 +1,12 @@
 (function($) {
 
+	var wrapper = $('#autocompleteplaces_wrapper');
+	var valwrapper = $('#multiplacevalues_wrapper');
 	var input = $('#location_picker');
 	var autocomplete = new google.maps.places.Autocomplete(input.get(0), {types: ["(regions)"] });
+	var isMultiple = wrapper.data("multiple");
 
-	// Avoid paying for data that you don't need by restricting the set of
-	// place fields that are returned to just the address components.
-	autocomplete.setFields(['address_component','place_id','geometry']);
-
-	// When the user selects an address from the drop-down, populate the
-	// address fields in the form.
-	autocomplete.addListener('place_changed', function(){
+	function onPlaceChange() {
 		$("#location_country").val('');
 		$("#location_admin1").val('');
 		$("#location_admin2").val('');
@@ -35,7 +32,52 @@
 				}
 			});
 		}
-	});
+	}
+
+	function onPlaceAdd() {
+		var placeString = $('<input type="hidden" name="placeString[]">');
+		var country = $('<input type="hidden" name="country[]">');
+		var admin1 = $('<input type="hidden" name="admin1[]">');
+		var admin2 = $('<input type="hidden" name="admin2[]">');
+		var city = $('<input type="hidden" name="city[]">');
+		var place = autocomplete.getPlace();
+		placeString.val( input.val() );
+		if (place.address_components != undefined) {
+			place.address_components.forEach(function(component){
+				if (component.types.includes("country")) {
+					country.val(component.long_name);
+				}
+				else if (component.types.includes("administrative_area_level_1")) {
+					admin1.val(component.long_name);
+				}
+				else if (component.types.includes("administrative_area_level_2")) {
+					admin2.val(component.long_name);
+				}
+				else if (component.types.includes("locality")) {
+					city.val(component.long_name);
+				}
+			});
+		}
+
+		var addHTML = $('<div class="multiplacevalues row-space-1"><a href="#" class="removeable pull-right"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + placeString.val() + '</div>');
+		addHTML.append(placeString).append(country).append(admin1).append(admin2).append(city);
+		valwrapper.append(addHTML);
+		input.val('');
+	}
+
+	function removePlace(e) {
+		var $thisvaluewrapper = $(this).parent('.multiplacevalues');
+		$thisvaluewrapper.remove();
+		e.preventDefault();
+	}
+
+	// Avoid paying for data that you don't need by restricting the set of
+	// place fields that are returned to just the address components.
+	autocomplete.setFields(['address_component','place_id','geometry']);
+
+	// When the user selects an address from the drop-down, populate the
+	// address fields in the form.
+	autocomplete.addListener('place_changed', isMultiple ? onPlaceAdd : onPlaceChange);
 
 	$(document).on("keydown.autocompleteplaces","#location_picker",function(e){
 		if(e.keyCode == 13) {
@@ -43,5 +85,7 @@
 			return false;
 		}
 	});
+
+	$(document).on("click.autocompleteplacesremove","a.removeable",removePlace);
 
 })(window.jQuery);
