@@ -14,18 +14,20 @@
 	#renderview(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"#args.multiple?'placeTextEntry':'placeString'#",id:"location_picker", help:args.help, label:args.label, placeholder:args.placeholder,isrequired:args.isrequired,default:args.multiple?"":event.getValue("placeString",args.geo.getPlaceString()?:"")})#
 	<cfif args.multiple>
 		<div class="row">
-			<div class="col-sm-#listlast(args.widthsplit,'/')# col-sm-offset-#listfirst(args.widthsplit,'/')#" id="multiplacevalues_wrapper">
-				<cfloop array="#args.geos#" item="geo" index="ii">
-					<div class="multiplacevalues row-space-1">
-						<a href="##" class="removeable pull-right"><i class="fas fa-times-square"></i></a>
-						<i class="fas fa-fw fa-map-marker-alt"></i> #geo.getPlaceString()#
-						<input type="hidden" name="placeString[]" value="#geo.getPlaceString()?:""#">
-						<input type="hidden" name="country[]" value="#geo.getCountry()?:""#">
-						<input type="hidden" name="admin1[]" value="#geo.getAdmin1()?:""#">
-						<input type="hidden" name="admin2[]" value="#geo.getAdmin2()?:""#">
-						<input type="hidden" name="city[]" value="#geo.getCity()?:""#">
-					</div>
-				</cfloop>
+			<div class="col-sm-#listlast(args.widthsplit,'/')# col-sm-offset-#listfirst(args.widthsplit,'/')#">
+				<div class="list-group" id="multiplacevalues_wrapper">
+					<cfloop array="#args.geos#" item="geo" index="ii">
+						<div class="multiplacevalues list-group-item">
+							<a href="##" class="removeable pull-right"><i class="fas fa-times-square"></i></a>
+							<i class="fas fa-fw fa-map-marker-alt"></i> #geo.getPlaceString()#
+							<input type="hidden" name="placeString[]" value="#geo.getPlaceString()?:""#">
+							<input type="hidden" name="country[]" value="#geo.getCountry()?:""#">
+							<input type="hidden" name="admin1[]" value="#geo.getAdmin1()?:""#">
+							<input type="hidden" name="admin2[]" value="#geo.getAdmin2()?:""#">
+							<input type="hidden" name="city[]" value="#geo.getCity()?:""#">
+						</div>
+					</cfloop>
+				</div>
 			</div>
 		</div>
 	<cfelse>

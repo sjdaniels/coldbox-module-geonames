@@ -59,7 +59,7 @@
 			});
 		}
 
-		var addHTML = $('<div class="multiplacevalues row-space-1"><a href="#" class="removeable pull-right"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + placeString.val() + '</div>');
+		var addHTML = $('<div class="multiplacevalues list-group-item"><a href="#" class="removeable pull-right"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + placeString.val() + '</div>');
 		addHTML.append(placeString).append(country).append(admin1).append(admin2).append(city);
 		valwrapper.append(addHTML);
 		input.val('');
