@@ -1,15 +1,15 @@
 (function($) {
 
 	var wrapper = $('#autocompleteaddress_wrapper');
-	var input = $('#address_picker');
+	var input = $('#location_picker');
 	var autocomplete = new google.maps.places.Autocomplete(input.get(0), {types: ["address"] });
 
 	function onPlaceChange() {
-		$("#location_country").val('');
-		$("#location_admin1").val('');
-		$("#location_admin2").val('');
-		$("#location_city").val('');
-		$("#location_street").val('');
+		$("#address_country").val('');
+		$("#address_admin1").val('');
+		$("#address_admin2").val('');
+		$("#address_city").val('');
+		$("#address_street").val('');
 		var place = autocomplete.getPlace();
 		$.log(place);
 		if (place.address_components != undefined) {
@@ -53,7 +53,7 @@
 	// address fields in the form.
 	autocomplete.addListener('place_changed', onPlaceChange);
 
-	$(document).on("keydown.autocompleteaddress","#address_picker",function(e){
+	$(document).on("keydown.autocompleteaddress","#location_picker",function(e){
 		if(e.keyCode == 13) {
 			e.preventDefault();
 			return false;
