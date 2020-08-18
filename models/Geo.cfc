@@ -6,6 +6,7 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 	property name="admin2" type="string";
 	property name="city" type="string";
 	property name="placeString" type="string"; // string in Places API autocomplete field
+	property name="street" type="string";
 	property name="ruleID" type="string";
 	property name="debug" type="struct";
 
@@ -25,7 +26,7 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 		"country":{ required:true }
 	}
 
-	Geo function set(required string country, required string admin1, required string admin2, required string city, string placeString){
+	Geo function set(required string country, required string admin1, required string admin2, required string city, string placeString, string street){
 		var originalHash = this.getHash()
 
 		this
@@ -37,6 +38,9 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 
 		if (!isnull(arguments.placeString))
 			this.setPlaceString(arguments.placeString);
+
+		if (!isnull(arguments.street))
+			this.setStreet(arguments.street);
 
 		if (this.getHash() != originalHash) {
 			this
@@ -76,6 +80,13 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 			if (this.getTags().find(local.countryID) && this.getID()==local.countryID)
 				return false;			
 		}
+	
+		return true;
+	}
+
+	boolean function isValidStreetAddress() {
+		if (isEmpty(this.getStreet()))
+			return false;
 	
 		return true;
 	}
@@ -257,7 +268,7 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 	}
 
 	boolean function isCity() {
-		return this.getPath().types.find("city");
+		return isnull(this.getStreet()) && this.getPath().types.find("city");
 	}
 
 	boolean function isEarth(){
