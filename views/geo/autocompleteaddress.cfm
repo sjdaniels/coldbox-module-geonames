@@ -6,10 +6,11 @@
 	param name="args.widthsplit" default="3/5";
 	param name="args.isrequired" default="false";
 	param name="args.apiKey" default="#getSetting('googleapis').apiKey#";
+	param name="args.allowregions" default="false";
 </cfscript>
 <cfoutput>
 <div id="autocompleteaddress_wrapper">
-	#renderview(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"placeString",id:"location_picker", help:args.help, label:args.label, placeholder:args.placeholder,isrequired:args.isrequired,default:event.getValue("placeString",args.geo.getPlaceString()?:"")})#
+	#renderview(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"placeString",id:"location_picker", help:args.help, label:args.label, data:{allowregions:args.allowregions}, placeholder:args.placeholder,isrequired:args.isrequired,default:event.getValue("placeString",args.geo.getPlaceString()?:"")})#
 	#renderview(view:"_form_bs/hidden",args:{name:"country",id:"address_country",value:event.getValue("country",args.geo.getCountry()?:"")})#
 	#renderview(view:"_form_bs/hidden",args:{name:"admin1",id:"address_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
 	#renderview(view:"_form_bs/hidden",args:{name:"admin2",id:"address_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#

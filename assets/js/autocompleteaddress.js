@@ -2,7 +2,8 @@
 
 	var wrapper = $('#autocompleteaddress_wrapper');
 	var input = $('#location_picker');
-	var autocomplete = new google.maps.places.Autocomplete(input.get(0), {types: ["address"] });
+	var types = $('#location_picker').data("allowregions") ? [] : ["address"];
+	var autocomplete = new google.maps.places.Autocomplete(input.get(0), {types: types });
 
 	function onPlaceChange() {
 		$("#address_country").val('');
