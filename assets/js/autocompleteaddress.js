@@ -1,9 +1,9 @@
-(function($) {
+(function ($) {
 
 	var wrapper = $('#autocompleteaddress_wrapper');
 	var input = $('#location_picker');
-	var types = $('#location_picker').data("allowregions") ? [] : ["address"];
-	var autocomplete = new google.maps.places.Autocomplete(input.get(0), {types: types });
+	var types = $('#location_picker').data("allowregions") ? ["geocode"] : ["address"];
+	var autocomplete = new google.maps.places.Autocomplete(input.get(0), { types: types });
 
 	function onPlaceChange() {
 		$("#address_country").val('');
@@ -14,7 +14,7 @@
 		var place = autocomplete.getPlace();
 		$.log(place);
 		if (place.address_components != undefined) {
-			place.address_components.reverse().forEach(function(component){
+			place.address_components.reverse().forEach(function (component) {
 				if (component.types.includes("country")) {
 					$("#address_country").val(component.long_name);
 					$.log("Country: " + component.long_name);
@@ -40,22 +40,22 @@
 					$.log("Street Number: " + component.long_name);
 				}
 			});
-		
-			$("#address_lat").val( place.geometry.location.lat() );
-			$("#address_lng").val( place.geometry.location.lng() );
+
+			$("#address_lat").val(place.geometry.location.lat());
+			$("#address_lng").val(place.geometry.location.lng());
 		}
 	}
 
 	// Avoid paying for data that you don't need by restricting the set of
 	// place fields that are returned to just the address components.
-	autocomplete.setFields(['address_component','place_id','geometry']);
+	autocomplete.setFields(['address_component', 'place_id', 'geometry']);
 
 	// When the user selects an address from the drop-down, populate the
 	// address fields in the form.
 	autocomplete.addListener('place_changed', onPlaceChange);
 
-	$(document).on("keydown.autocompleteaddress","#location_picker",function(e){
-		if(e.keyCode == 13) {
+	$(document).on("keydown.autocompleteaddress", "#location_picker", function (e) {
+		if (e.keyCode == 13) {
 			e.preventDefault();
 			return false;
 		}
