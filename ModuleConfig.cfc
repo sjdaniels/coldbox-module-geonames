@@ -6,7 +6,7 @@ component {
 	this.description		= "Module for GeoNames API";
 	this.version 			= "1.0";
 
-	this.dependencies		 = ["mongoentity"];
+	this.dependencies		 = ["mongoentity","geoIP"];
 
 	// The module entry point using SES
 	this.entryPoint     = "geonames";
