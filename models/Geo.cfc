@@ -188,6 +188,11 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 		return result;
 	}
 
+	string function getTextIndexContent(required string lang){
+		var result = NameResolver.getTextIndexContent( this.getID(), arguments.lang );
+		return result;
+	}
+
 	array function getAltNames(){
 		var result = NameResolver.getNearNames( this.getID() );
 		return result;

@@ -80,6 +80,15 @@ component singleton="true" {
 		return nameEntity.getFullName(arguments.lang);
 	}
 
+	string function getTextIndexContent(required numeric geoID, string lang=i18n.getFwLanguageCode()) {
+		var name = getGeo(arguments.geoID);
+		var result = name.pathNames.keyExists(arguments.lang)?name.pathNames[arguments.lang]:name.pathNames["en"];
+		result.deleteAt(1);			
+		result.deleteAt(1);			
+
+		return result.toList(" ");
+	}
+
 	array function getNearNames(required numeric geoID, string lang=i18n.getFwLanguageCode()) {
 		var nameEntity = getNamesEntity();
 		var nears = getNears().get(arguments.geoID);
