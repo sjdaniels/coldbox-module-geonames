@@ -83,8 +83,13 @@ component singleton="true" {
 	string function getTextIndexContent(required numeric geoID, string lang=i18n.getFwLanguageCode()) {
 		var name = getGeo(arguments.geoID);
 		var result = name.pathNames.keyExists(arguments.lang)?name.pathNames[arguments.lang]:name.pathNames["en"];
-		result.deleteAt(1);			
-		result.deleteAt(1);			
+		var offset = 2; // always trim off Earth and Continent
+		while (offset) {
+			result.deleteAt(1)
+			offset--
+			if (!result.len())
+				break;
+		}
 
 		return result.toList(" ");
 	}
