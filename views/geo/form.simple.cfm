@@ -1,5 +1,5 @@
 <cfscript>
-	param name="args.geo" default="#getModel('Geo@GeoNames')#";
+	param name="args.geo" default="#getInstance('Geo@GeoNames')#";
 	param name="args.widthsplit" default="3/5";
 </cfscript>
 <cfoutput>

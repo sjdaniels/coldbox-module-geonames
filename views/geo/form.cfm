@@ -1,5 +1,5 @@
 <cfscript>
-	param name="args.geo" default="#getModel('Geo@GeoNames')#";
+	param name="args.geo" default="#getInstance('Geo@GeoNames')#";
 	countryoptions = runEvent(event:"geonames:Main.countryoptions",eventArguments:{renderOut:true})
 </cfscript>
 <cfoutput>
