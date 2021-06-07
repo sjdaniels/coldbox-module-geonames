@@ -71,6 +71,15 @@
 		e.preventDefault();
 	}
 
+	function validate(e) {
+		if (isMultiple)
+			return;
+
+		if (!$("#location_country").val().length) {
+			input.val('');
+		}
+	}
+
 	// Avoid paying for data that you don't need by restricting the set of
 	// place fields that are returned to just the address components.
 	autocomplete.setFields(['address_component','place_id','geometry']);
@@ -87,5 +96,6 @@
 	});
 
 	$(document).on("click.autocompleteplacesremove","a.removeable",removePlace);
+	$(document).on("blur.autocompleteplaces","#location_picker",validate);
 
 })(window.jQuery);
