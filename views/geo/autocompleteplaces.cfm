@@ -22,7 +22,6 @@
 	];
 
 	if (blockedCountries.find(getInstance("geoIP2@geoIP").lookup(cgi.remote_addr).getCountryGeoID()?:6252001)) {
-		echo(renderview(view:"_form_bs/hidden", args:{name:"placeString", value:""}))
 		echo(renderview(view:"geo/form.simple.separated", module:"geonames", args:args));
 		return;
 	}
