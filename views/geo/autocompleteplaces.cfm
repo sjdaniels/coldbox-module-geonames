@@ -8,6 +8,7 @@
 	param name="args.isrequired" default="false";
 	param name="args.apiKey" default="#getSetting('googleapis').apiKey#";
 	param name="args.multiple" default="false";
+	param name="args.fallback" default="true";
 
 	// Google Maps Platform Prohibited Territories 
 	// https://cloud.google.com/maps-platform/terms/maps-prohibited-territories
@@ -22,6 +23,9 @@
 	];
 
 	if (blockedCountries.find(getInstance("geoIP2@geoIP").lookup(cgi.remote_addr).getCountryGeoID()?:6252001)) {
+		if (!args.fallback)
+			return;
+
 		echo(renderview(view:"geo/form.simple.separated", module:"geonames", args:args));
 		return;
 	}
