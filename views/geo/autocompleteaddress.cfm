@@ -7,6 +7,28 @@
 	param name="args.isrequired" default="false";
 	param name="args.apiKey" default="#getSetting('googleapis').apiKey#";
 	param name="args.allowregions" default="false";
+	param name="args.fallback" default="true";
+
+	// Google Maps Platform Prohibited Territories 
+	// https://cloud.google.com/maps-platform/terms/maps-prohibited-territories
+	blockedCountries = [
+		 1814991 // China
+		,703883 // Crimea
+		,3562981 // Cuba
+		,130758 // Iran
+		,1873107 // North Korea
+		,163843 // Syria
+		,1562822 // Vietnam
+		// ,6252001 // Test USA
+	];
+
+	if (blockedCountries.find(getInstance("geoIP2@geoIP").lookup(cgi.remote_addr).getCountryGeoID()?:6252001)) {
+		if (!args.fallback)
+			return;
+
+		echo(renderview(view:"geo/form.simple.separated", module:"geonames", args:args));
+		return;
+	}
 </cfscript>
 <cfoutput>
 <div id="autocompleteaddress_wrapper">
