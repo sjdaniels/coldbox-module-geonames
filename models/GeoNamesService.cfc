@@ -249,7 +249,7 @@ component output="false" {
 			local.geo = {
 				 "_id":local.item.geonameID
 				,"geopoint":{ "type":"Point", "coordinates":[ javacast("numeric",local.item.lng), javacast("numeric",local.item.lat) ] }
-				,"population":local.item.population
+				,"population":local.item.population?:0
 				,"fcode":local.item.fcode
 				,"fcl":local.item.fcl
 				,"isSearchOption":local.searchOption
