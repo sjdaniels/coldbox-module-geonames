@@ -6,6 +6,7 @@ component singleton="true" {
 	property name="Deployments" inject="id";
 	property name="API" inject="API@geonames";
 	property name="GeoNamesService" inject="GeoNamesService@geonames";
+	property name="RegionService" inject="RegionService@geonames";
 
 	function getNamesEntity() provider="Names@geonames" {}
 	function getNears() provider="Nears@geonames" {}
@@ -89,6 +90,17 @@ component singleton="true" {
 			offset--
 			if (!result.len())
 				break;
+		}
+
+		// add region name for US admin1 and below
+		if (name.path.find(6252001) && ["admin1","admin2","city"].find( name.type )) {
+			local.paths = getPath(arguments.geoID, arguments.lang);
+			var admin1 = local.paths.ids[ local.paths.types.find("admin1") ];
+			RegionService.getAdHocRegions()
+				.filter((region)=>region.type=="usregion" && region.geoID.find(admin1))
+				.each((region)=>{
+					result.append(region.label);
+				});
 		}
 
 		return result.toList(" ");
