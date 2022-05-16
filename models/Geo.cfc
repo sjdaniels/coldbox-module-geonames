@@ -279,4 +279,15 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 	boolean function isEarth(){
 		return (this.getID()==this.EARTH);
 	}
+
+	struct function getSchemaLD() {
+		var result = ["@type":"Place", "address":[ "@type":"PostalAddress", "addressCountry":this.getCountryCode() ]];
+		var path = this.getPath();
+		if (path.types.find("admin1"))
+			result.address["addressRegion"] = path.names[path.types.find('admin1')];
+		if (path.types.find("city"))
+			result.address["addressLocality"] = path.names[path.types.find('city')];
+
+		return result;
+	}
 }
