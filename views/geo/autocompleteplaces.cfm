@@ -58,7 +58,12 @@
 		#renderview(view:"_form_bs/hidden",args:{name:"city",id:"location_city",value:event.getValue("city",args.geo.getCity()?:"")})#
 	</cfif>
 </div>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=#args.apiKey#&libraries=places" defer></script>
+<script type="text/javascript">
+	initMap = function() {
+		return;
+	}
+</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=#args.apiKey#&libraries=places&callback=initMap" defer></script>
 <cfif settingExists("appBuild")>
 	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteplaces.#getSetting('appBuild')#.js" defer></script>
 <cfelse>

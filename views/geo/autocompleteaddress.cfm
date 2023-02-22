@@ -41,7 +41,12 @@
 	#renderview(view:"_form_bs/hidden",args:{name:"lat",id:"address_lat",value:event.getValue("lat","")})#
 	#renderview(view:"_form_bs/hidden",args:{name:"lng",id:"address_lng",value:event.getValue("lng","")})#
 </div>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=#args.apiKey#&libraries=places" defer></script>
+<script type="text/javascript">
+	initMap = function() {
+		return;
+	}
+</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=#args.apiKey#&libraries=places&callback=initMap" defer></script>
 <cfif settingExists("appBuild")>
 	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteaddress.#getSetting('appBuild')#.js" defer></script>
 <cfelse>
