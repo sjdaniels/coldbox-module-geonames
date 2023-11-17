@@ -27,22 +27,22 @@
 	<label for="region" class="control-label col-sm-#args.widthsplit[1]#">#args.label#</label>
 	<div class="col-sm-#args.widthsplit[2]#">
 		<div id="countries" class="row-space-1">
-			#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"countryID", options:getInstance("RegionService@geonames").getCountryOptions(lang:getFwLang(), select:args.subsetcountries, withpreferred:args.withpreferred), default:selectedcountry})#
+			#view(view:"_form_bs/select", args:{widthsplit:"", name:"countryID", options:getInstance("RegionService@geonames").getCountryOptions(lang:getFwLang(), select:args.subsetcountries, withpreferred:args.withpreferred), default:selectedcountry})#
 		</div>
 		<cfloop array="#args.countriesRequireAdmin#" item="country">
 			<div class="#selectedcountry==country?'':'inithidden'# row-space-1 geo-subselect geo-#country#">
-				#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"admin1_#country#", options:getInstance("RegionService@geonames").getAdminOptions(getFwLang(), country), default:event.getValue("admin1_#country#",args.geo.getID()?:"")})#
+				#view(view:"_form_bs/select", args:{widthsplit:"", name:"admin1_#country#", options:getInstance("RegionService@geonames").getAdminOptions(getFwLang(), country), default:event.getValue("admin1_#country#",args.geo.getID()?:"")})#
 			</div>
 		</cfloop>
 		<cfif args.subsetcountries>
 			<div class="#selectedcountry=='other'?'':'inithidden'# row-space-1 geo-subselect geo-other">
-				#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"continentID", options:getInstance("RegionService@geonames").getContinentOptions(getFwLang()), default:event.getValue("continentID",args.geo.getID()?:"")})#
+				#view(view:"_form_bs/select", args:{widthsplit:"", name:"continentID", options:getInstance("RegionService@geonames").getContinentOptions(getFwLang()), default:event.getValue("continentID",args.geo.getID()?:"")})#
 			</div>
 		</cfif>
 	</div>
 	<cfif len(trim(args.help))>
 		<span class="help-block col-sm-offset-#args.widthsplit[1]# col-sm-#(12-args.widthsplit[1])#">#args.help#</span>
 	</cfif>
-	#renderview(view:"_form_bs/hidden", args:{name:"regionID", value:event.getValue("regionID",args.geo.getID()?:"")})#
+	#view(view:"_form_bs/hidden", args:{name:"regionID", value:event.getValue("regionID",args.geo.getID()?:"")})#
 </div>
 </cfoutput>

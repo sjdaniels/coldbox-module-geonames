@@ -15,7 +15,7 @@ component output="false" {
 
     	prc.options = extractOptions( local.names )
         prc.optionslabel = $("geo.select_admin1")
-        prc.response = renderview(view:"geo/options",module:"geonames")
+        prc.response = view(view:"geo/options",module:"geonames")
 	}
 
 	function admin2options(event,rc,prc) cache="true" cachetimeout="1440" {
@@ -31,7 +31,7 @@ component output="false" {
 
     	prc.options = extractOptions( local.names )
         prc.optionslabel = $("geo.select_admin2")
-        prc.response = renderview(view:"geo/options",module:"geonames")
+        prc.response = view(view:"geo/options",module:"geonames")
 	}
 
 	function countryoptions(event,rc,prc,renderOut=false) cache="true" cachetimeout="1440" {
@@ -41,7 +41,7 @@ component output="false" {
 		local.countries = local.collection.find({"type":"country"}).toArray()
     	prc.options = extractOptions( local.countries )
         prc.optionslabel = $("geo.select_country")
-        prc.response = renderview(view:"geo/options",module:"geonames")
+        prc.response = view(view:"geo/options",module:"geonames")
         if (renderOut) {
         	return prc.response;
         }

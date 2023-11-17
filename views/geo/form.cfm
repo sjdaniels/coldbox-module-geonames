@@ -6,9 +6,7 @@
 <cfsavecontent variable="prc.inlinejavascript" append=true>
 	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/geoinput.js"></script>
 </cfsavecontent>
-	#renderview(view:"_form/hidden",args:{ name:"geoID", value:"" })#
-	<!--- #renderview(view:"_form/input",args:{ name:"geoID", label:"GeoNames ID Debug", value:"", disabled:true })# --->
-	
+	#view(view:"_form/hidden",args:{ name:"geoID", value:"" })#	
 	<label class="required">#$('geo.label_location')#</label>
 	<fieldset class="selectRelated">
 		<select name="country" id="country" required>#countryoptions#</select>

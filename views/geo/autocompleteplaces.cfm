@@ -26,13 +26,13 @@
 		if (!args.fallback)
 			return;
 
-		echo(renderview(view:"geo/form.simple.separated", module:"geonames", args:args));
+		echo(view(view:"geo/form.simple.separated", module:"geonames", args:args));
 		return;
 	}
 </cfscript>
 <cfoutput>
 <div id="autocompleteplaces_wrapper" data-multiple="#args.multiple#">
-	#renderview(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"#args.multiple?'placeTextEntry':'placeString'#",id:"location_picker", help:args.help, label:args.label, placeholder:args.placeholder,isrequired:args.isrequired,default:args.multiple?"":event.getValue("placeString",args.geo.getPlaceString()?:"")})#
+	#view(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"#args.multiple?'placeTextEntry':'placeString'#",id:"location_picker", help:args.help, label:args.label, placeholder:args.placeholder,isrequired:args.isrequired,default:args.multiple?"":event.getValue("placeString",args.geo.getPlaceString()?:"")})#
 	<cfif args.multiple>
 		<div class="row">
 			<div class="col-sm-#listlast(args.widthsplit,'/')# col-sm-offset-#listfirst(args.widthsplit,'/')#">
@@ -52,10 +52,10 @@
 			</div>
 		</div>
 	<cfelse>
-		#renderview(view:"_form_bs/hidden",args:{name:"country",id:"location_country",value:event.getValue("country",args.geo.getCountry()?:"")})#
-		#renderview(view:"_form_bs/hidden",args:{name:"admin1",id:"location_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
-		#renderview(view:"_form_bs/hidden",args:{name:"admin2",id:"location_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#
-		#renderview(view:"_form_bs/hidden",args:{name:"city",id:"location_city",value:event.getValue("city",args.geo.getCity()?:"")})#
+		#view(view:"_form_bs/hidden",args:{name:"country",id:"location_country",value:event.getValue("country",args.geo.getCountry()?:"")})#
+		#view(view:"_form_bs/hidden",args:{name:"admin1",id:"location_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
+		#view(view:"_form_bs/hidden",args:{name:"admin2",id:"location_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#
+		#view(view:"_form_bs/hidden",args:{name:"city",id:"location_city",value:event.getValue("city",args.geo.getCity()?:"")})#
 	</cfif>
 </div>
 <script type="text/javascript">

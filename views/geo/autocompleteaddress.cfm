@@ -26,20 +26,20 @@
 		if (!args.fallback)
 			return;
 
-		echo(renderview(view:"geo/form.simple.separated", module:"geonames", args:args));
+		echo(view(view:"geo/form.simple.separated", module:"geonames", args:args));
 		return;
 	}
 </cfscript>
 <cfoutput>
 <div id="autocompleteaddress_wrapper">
-	#renderview(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"placeString",id:"location_picker", help:args.help, label:args.label, data:{allowregions:args.allowregions}, placeholder:args.placeholder,isrequired:args.isrequired,default:event.getValue("placeString",args.geo.getPlaceString()?:"")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"country",id:"address_country",value:event.getValue("country",args.geo.getCountry()?:"")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"admin1",id:"address_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"admin2",id:"address_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"city",id:"address_city",value:event.getValue("city",args.geo.getCity()?:"")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"street",id:"address_street",value:event.getValue("street",args.geo.getStreet()?:"")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"lat",id:"address_lat",value:event.getValue("lat","")})#
-	#renderview(view:"_form_bs/hidden",args:{name:"lng",id:"address_lng",value:event.getValue("lng","")})#
+	#view(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"placeString",id:"location_picker", help:args.help, label:args.label, data:{allowregions:args.allowregions}, placeholder:args.placeholder,isrequired:args.isrequired,default:event.getValue("placeString",args.geo.getPlaceString()?:"")})#
+	#view(view:"_form_bs/hidden",args:{name:"country",id:"address_country",value:event.getValue("country",args.geo.getCountry()?:"")})#
+	#view(view:"_form_bs/hidden",args:{name:"admin1",id:"address_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
+	#view(view:"_form_bs/hidden",args:{name:"admin2",id:"address_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#
+	#view(view:"_form_bs/hidden",args:{name:"city",id:"address_city",value:event.getValue("city",args.geo.getCity()?:"")})#
+	#view(view:"_form_bs/hidden",args:{name:"street",id:"address_street",value:event.getValue("street",args.geo.getStreet()?:"")})#
+	#view(view:"_form_bs/hidden",args:{name:"lat",id:"address_lat",value:event.getValue("lat","")})#
+	#view(view:"_form_bs/hidden",args:{name:"lng",id:"address_lng",value:event.getValue("lng","")})#
 </div>
 <script type="text/javascript">
 	initMap = function() {
