@@ -38,9 +38,7 @@ component output="false" {
 			arguments.countryCode = listtoarray(arguments.countryCode)
 
 		local.params = {
-			 "username":api.username
-			,"token":api.token
-			,"orderby":arguments.orderby
+			 "orderby":arguments.orderby
 			,"lang":arguments.lang
 			,"style":arguments.style
 		}
@@ -91,14 +89,7 @@ component output="false" {
 			}
 		}
 
-		// AlertBox.marker("Calling #getUrl()#/searchJSON?#local.querystring#")
-		http url="#getUrl()#/searchJSON?#local.querystring#" result="local.cfhttp" {}
-
-		try {
-			local.response = deserializeJSON(local.cfhttp.filecontent)
-		} catch (any e) {
-			throwAPIException(local.cfhttp)
-		}
+		local.response = call("/searchJSON",local.params);
 
 		if (!structkeyexists(local.response,"geonames"))
 			throwAPIException(local.response)
@@ -110,20 +101,15 @@ component output="false" {
 	}
 
 	public array function getHierarchy(required numeric geoID, string lang, string style="MEDIUM") {
-		http url="#getUrl()#/hierarchyJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="geonameId" value="#arguments.geoID#" type="url";
-			httpparam name="style" value="#arguments.style#" type="url";
-			if (!isnull(arguments.lang))
-				httpparam name="lang" value="#arguments.lang#" type="url";
+		local.params = {
+			 "geonameId":arguments.geoID
+			,"style":arguments.style
 		}
 
-		try {
-			local.response = deserializeJSON(local.cfhttp.filecontent)
-		} catch (any local.e) {
-			throwAPIException(local.cfhttp)
-		}
+		if (!isnull(arguments.lang))
+			local.params["lang"] = arguments.lang;
+
+		local.response = call("/hierarchyJSON", local.params);
 
 		if (isnull(local.response.geonames)) {
 			throwAPIException(local.response)
@@ -132,39 +118,27 @@ component output="false" {
 	}
 
 	public any function findNearbyPlaceName(required numeric lat, required numeric lng, string lang, string style="FULL", string cities, boolean localCountry=true, numeric radius=25, numeric maxrows=10){
-		http url="#getUrl()#/findNearbyPlaceNameJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="style" value="#arguments.style#" type="url";
-			httpparam name="lat" value="#arguments.lat#" type="url";
-			httpparam name="lng" value="#arguments.lng#" type="url";
-			httpparam name="radius" value="#arguments.radius*1.609#" type="url"; // arguments.radius * 1.609 converted to km
-			httpparam name="maxRows" value="#arguments.maxrows#" type="url";
-			httpparam name="localCountry" value="#arguments.localCountry#" type="url";
-			if (!isnull(arguments.cities))
-				httpparam name="cities" value="#arguments.cities#" type="url";
+		local.params = {
+			 "style":arguments.style
+			,"lat":arguments.lat
+			,"lng":arguments.lng
+			,"radius":arguments.radius*1.609
+			,"maxRows":arguments.maxrows
+			,"localCountry":arguments.localCountry
 		}
+		if (!isnull(arguments.cities))
+			local.params["cities"] = arguments.cities;
 
-		local.response = deserializeJSON(local.cfhttp.filecontent)
-
-		try {
-			if (!local.response.geonames.len())
-				return;
-		} catch (any local.e) {
-			throwAPIException(local.response);
-		}
-
+		local.response = call("/findNearbyPlaceNameJSON",local.params);
 		return local.response;
 	}
 
 	public array function getChildren(required numeric geoID){
-		http url="#getUrl()#/childrenJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="geonameId" value="#arguments.geoID#" type="url";
+		local.params = {
+			"geonameId":arguments.geoID
 		}
 
-		local.response = deserializeJSON(local.cfhttp.filecontent)
+		local.response = call("/childrenJSON", local.params);
 		return local.response.geonames;
 	}
 
@@ -173,13 +147,11 @@ component output="false" {
 		if (!isnull(staticResult))
 			return staticResult;
 
-		http url="#getUrl()#/neighboursJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="geonameId" value="#arguments.geoID#" type="url";
+		local.params = {
+			"geonameId":arguments.geoID
 		}
 
-		local.response = deserializeJSON(local.cfhttp.filecontent)
+		local.response = call("/neighboursJSON", local.params);
 		return local.response.geonames;
 	}
 
@@ -219,17 +191,15 @@ component output="false" {
 	}
 
 	public struct function get(required numeric geoID, string lang, string style="FULL"){
-		http url="#getUrl()#/getJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="geonameId" value="#arguments.geoID#" type="url";
-			httpparam name="style" value="#arguments.style#" type="url";
-			if (!isnull(arguments.lang))
-				httpparam name="lang" value="#arguments.lang#" type="url";
+		local.params = {
+			 "geonameId":arguments.geoID
+			,"style":arguments.style
 		}
+		if (!isnull(arguments.lang))
+			local.params["lang"] = arguments.lang;
 
-		local.response = deserializeJSON(local.cfhttp.filecontent);
-
+		local.response = call("/getJSON", local.params);
+		
 		if (!local.response.keyExists("geonameID")) {
 			local.response["geonameID"] = arguments.geoID;
 			throwAPIException(local.response);
@@ -239,27 +209,20 @@ component output="false" {
 	}
 
 	public any function getByPostalCode(required string postalcode, string lang, string style="FULL", string country) {
-		http url="#getUrl()#/postalCodeSearchJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="postalcode" value="#arguments.postalcode#" type="url";
-			httpparam name="style" value="#arguments.style#" type="url";
-			if (isnull(arguments.country))
-				httpparam name="countryBias" value="US" type="url";
-			else 
-				httpparam name="country" value="#arguments.country#" type="url";
-			if (!isnull(arguments.lang))
-				httpparam name="lang" value="#arguments.lang#" type="url";
+		local.params = {
+			 "postalcode":arguments.postalcode
+			,"style":arguments.style
 		}
 
-		local.response = deserializeJSON(local.cfhttp.filecontent)
+		if (!isnull(arguments.lang))
+			local.params["lang"] = arguments.lang;
 
-		try {
-			if (!local.response.postalcodes.len())
-				return;
-		} catch (any local.e) {
-			throwAPIException(local.response);
-		}
+		if (isnull(arguments.country))
+			local.params["countryBias"] = "US";
+		else 
+			local.params["country"] = arguments.country;
+
+		local.response = call("/postalCodeSearchJSON",local.params);
 
 		local.postalcode = local.response.postalcodes[1]
 
@@ -280,34 +243,25 @@ component output="false" {
 	}
 
 	public any function getTimezone(required numeric lat, required numeric lng, numeric radius, string lang) {
-		http url="#getUrl()#/timezoneJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="lat" value="#arguments.lat#" type="url";
-			httpparam name="lng" value="#arguments.lng#" type="url";
-			if (!isnull(arguments.radius))
-				httpparam name="radius" value="#arguments.radius#" type="url";
-			if (!isnull(arguments.lang))
-				httpparam name="lang" value="#arguments.lang#" type="url";
+		local.params = {
+			 "lat":arguments.lat
+			,"lng":arguments.lng
 		}
 
-		local.response = deserializeJSON(local.cfhttp.filecontent)
-		// if (isnull(local.response.geonames)) {
-		// 	throwAPIException(local.response)
-		// }
+		if (!isnull(arguments.radius))
+			local.params["radius"] = arguments.radius;
+		if (!isnull(arguments.lang))
+			local.params["lang"] = arguments.lang;
+
+		local.response = call("/timezoneJSON",local.params);
 		return local.response;
 	}
 
 	public array function getCountries(){
 		var result = []
-		
-		http url="#getUrl()#/countryInfoJSON" result="local.cfhttp" {
-			httpparam name="username" value="#api.username#" type="url";
-			httpparam name="token" value="#api.token#" type="url";
-			httpparam name="style" value="FULL" type="url";
-		}
 
-		local.response = deserializeJSON(local.cfhttp.filecontent)
+		local.response = call("/countryInfoJSON",{ "style":"FULL" });	
+
 		if (!structkeyexists(local.response,"geonames"))
 			throwAPIException(local.response)
 
@@ -322,8 +276,65 @@ component output="false" {
 		return local.geo.alternatenames;
 	}
 
-	private void function throwAPIException(required any response){
+	private struct function call( required string path, struct params={}, numeric attempt=1 ){
+		var params = arguments.params;
+		http url="#getURL()##arguments.path#" method="get" result="local.cfhttp" {
+			httpparam name="username" value="#api.username#" type="url";
+			httpparam name="token" value="#api.token#" type="url";
+			loop collection="#params#" item="local.val" index="local.key" {
+				if (isArray(local.val)) {
+					loop array="#local.val#" item="local.subval" {
+						httpparam type="url" name="#local.key#" value="#local.subval#";
+					}
+				}
+				else 
+					httpparam type="url" name="#local.key#" value="#local.val#";
+			}
+		}
 
+		if (local.cfhttp.status_code != 200) {
+			local.retry = retryCall( local.cfhttp.status_code, arguments.attempt );
+			if (local.retry.shouldretry) {
+				AlertBox.marker( "Retrying GeoNames API Call #arguments.path# - attempt #local.retry.nextattempt# - delaying #local.retry.delay#" );
+				sleep(local.retry.delay);
+				return call( arguments.path, arguments.params, local.retry.nextattempt );
+			}
+		}
+
+		var result = parseResponse( local.cfhttp );
+		return result;
+	}
+
+	private any function parseResponse(required struct response) {		
+		try {
+			var apiResult = deserializeJSON(arguments.response.filecontent);
+		} 
+		catch (Any local.e) {
+			throwAPIException(arguments.response);
+		}
+
+		return apiResult;
+	}	
+
+	private struct function retryCall( required numeric statusCode, required numeric attempt ) {
+		local.retrydelays = [
+			 100
+			,200
+			,300
+			,400
+			,500
+			,1000
+			,5000
+		];
+
+		var result = { shouldretry:arguments.attempt lte local.retrydelays.len(), nextattempt:arguments.attempt+1 };
+		if (result.shouldretry)
+			result.delay = local.retrydelays[arguments.attempt];
+
+		return result;
+	}
+
+	private void function throwAPIException(required any response){
 		throw(type:"GeoNamesException",message:"GeoNames API Exception.",detail:serializeJSON(arguments.response),errorcode:arguments.response.status.value?:0);
 	}
 
@@ -357,7 +368,7 @@ component output="false" {
 		if (!cache.lookup(cachekey)){
 			AlertBox.marker("Calling for GeoNames account information...")
 
-			http url="#api.premiumUrl#/viewAccount" result="local.cfhttp" {
+			http url="#api.premiumUrl#/viewAccountJSON" result="local.cfhttp" {
 				httpparam name="username" value="#api.username#" type="url";
 				httpparam name="token" value="#api.token#" type="url";
 			}
@@ -365,12 +376,10 @@ component output="false" {
 			var result = {}
 
 			try{
-				var resultXML = XmlParse(local.cfhttp.filecontent)
+				result = deserializeJSON(local.cfhttp.filecontent)
 			} catch (any local.e) {
 				throwAPIException(local.cfhttp.filecontent)
 			}
-
-			resultXML.XmlRoot.XmlChildren.each(function(element){ result[element.XmlName] = element.XmlText })
 
 			result["isPremium"] = ( result.creditsTotalUsed lt result.creditsTotal && datecompare(now(),result.validTillDate) lt 0 )
 
@@ -380,5 +389,4 @@ component output="false" {
 
 		return cache.get(cachekey);
 	}
-
 }
