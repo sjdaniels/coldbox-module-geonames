@@ -22,68 +22,68 @@ component singleton="true" {
 
 	struct function getGeo(required numeric geoID) {
 		arguments.geoID = javacast("numeric",arguments.geoID)
-		var name = names.findOne({"_id":arguments.geoID})
+		local.name = names.findOne({"_id":arguments.geoID})
 
-		if (isnull(name))
-			name = updateGeo(arguments.geoID)
+		if (isnull(local.name))
+			local.name = updateGeo(arguments.geoID)
 	
-		return name;
+		return local.name;
 	}
 
 	struct function getGeoPoint(required numeric geoID) {
-		var name = getGeo(geoID)
-		return name.geopoint;
+		local.name = getGeo(geoID)
+		return local.name.geopoint;
 	}
 
 	array function getTags(required numeric geoID) {
-		var name = getGeo(geoID)
-		return name.path;
+		local.name = getGeo(geoID)
+		return local.name.path;
 	}
 
 	string function getCountryCode(required numeric geoID) {
-		var name = getGeo(geoID)
-		return (name.countryCode ?: "");
+		local.name = getGeo(geoID)
+		return (local.name.countryCode ?: "");
 	}
 
 	struct function getPath(required numeric geoID, string lang) {
-		var name = getGeo(geoID)
+		local.name = getGeo(geoID)
 
 		if (isnull(arguments.lang))
 			arguments.lang = i18n.getFwLanguageCode()
 
-		if (!structkeyexists(name.pathNames,arguments.lang)){
+		if (!structkeyexists(local.name.pathNames,arguments.lang)){
 			var pathNames = []
-			name.pathNames["en"].each(function(name){
+			local.name.pathNames["en"].each(function(name){
 				pathNames.append("{{#name#}}")
 			});
-			name.pathNames[arguments.lang] = pathNames
+			local.name.pathNames[arguments.lang] = pathNames
 		}
 
-		return { "ids":name.path, "names":name.pathNames[arguments.lang], "types":name.pathTypes };
+		return { "ids":local.name.path, "names":local.name.pathNames[arguments.lang], "types":local.name.pathTypes };
 	}
 
 	string function getName(required numeric geoID, string lang) {
-		var name = getGeo(geoID)
+		local.name = getGeo(geoID)
 		if (isnull(arguments.lang))
 			arguments.lang = i18n.getFwLanguageCode()
 
-		if (!structkeyexists(name.name,arguments.lang))
-			return "{{#name.name["en"]#}}";
+		if (!structkeyexists(local.name.name,arguments.lang))
+			return "{{#local.name.name["en"]#}}";
 
-		return name.name[arguments.lang];
+		return local.name.name[arguments.lang];
 	}
 
 	string function getFullName(required numeric geoID, string lang=i18n.getFwLanguageCode()) {
-		var name = getGeo(geoID)
+		local.name = getGeo(geoID)
 		var nameEntity = getNamesEntity();
 
-		nameEntity.populateFromDoc(nameEntity,name);
+		nameEntity.populateFromDoc(nameEntity,local.name);
 		return nameEntity.getFullName(arguments.lang);
 	}
 
 	string function getTextIndexContent(required numeric geoID, string lang=i18n.getFwLanguageCode()) {
-		var name = getGeo(arguments.geoID);
-		var result = name.pathNames.keyExists(arguments.lang)?name.pathNames[arguments.lang]:name.pathNames["en"];
+		local.name = getGeo(arguments.geoID);
+		var result = local.name.pathNames.keyExists(arguments.lang)?local.name.pathNames[arguments.lang]:local.name.pathNames["en"];
 		var offset = 2; // always trim off Earth and Continent
 		while (offset) {
 			result.deleteAt(1)
@@ -93,7 +93,7 @@ component singleton="true" {
 		}
 
 		// add region name for US admin1 and below
-		if (name.path.find(6252001) && ["admin1","admin2","city"].find( name.type )) {
+		if (local.name.path.find(6252001) && ["admin1","admin2","city"].find( local.name.type )) {
 			local.paths = getPath(arguments.geoID, arguments.lang);
 			var admin1 = local.paths.ids[ local.paths.types.find("admin1") ];
 			RegionService.getAdHocRegions()
@@ -123,35 +123,35 @@ component singleton="true" {
 	}
 
 	string function getType(required numeric geoID) {
-		var name = getGeo(geoID)
-		return name.type;
+		local.name = getGeo(geoID)
+		return local.name.type;
 	}
 
 	// find "nearby" locations. Radius only applies to cities, all other types return neighbors
 	any function getNearby(required numeric geoID, numeric radius, numeric limit) {
-		var name = getGeo(geoID);
+		local.name = getGeo(geoID);
 		var result = [];
 
-		if (name.type eq "continent" || name.type eq "planet")
+		if (local.name.type eq "continent" || local.name.type eq "planet")
 			return arguments.geoID;
 
-		local.logmsg = "Expanding locations for #name.type# #name.ascii?:''#";
-		if (name.type eq "city")
+		local.logmsg = "Expanding locations for #local.name.type# #local.name.ascii?:''#";
+		if (local.name.type eq "city")
 			local.logmsg &= " - radius #arguments.radius#";
 		else 
 			local.logmsg &= " - nearest #arguments.limit#";
 
 		timer.start(local.logmsg);
 
-		if (name.type eq "city") {
+		if (local.name.type eq "city") {
 			local.items = names.find({
-				 "geopoint":{"$geoWithin":{"$centerSphere":[name.geopoint.coordinates, (arguments.radius/3963.2)]}} // N miles 
+				 "geopoint":{"$geoWithin":{"$centerSphere":[local.name.geopoint.coordinates, (arguments.radius/3963.2)]}} // N miles 
 				,"isSearchOption":true
 				,"type":"city"
 			},{"_id":1});
 		} else {
 			local.items = names.find({
-				 "geopoint":{"$near":{"$geometry":name.geopoint}} 
+				 "geopoint":{"$near":{"$geometry":local.name.geopoint}} 
 				,"isSearchOption":true
 				,"type":name.type
 			},{"_id":1}).limit( arguments.limit+1 ); // +1 because we include original. we want original + arguments.limit more 
