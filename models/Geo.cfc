@@ -127,7 +127,11 @@ component entityName="Geo" output="false" extends="mongoentity.models.ActiveEnti
 	}
 
 	string function getLabel(){
-		return listtoarray(getConcatenated(),"|").reverse().toList(", ");
+		var result = listtoarray(getConcatenated(),"|");
+		if (result.len() && result.first() == "United States")
+			result.deleteAt(1);
+
+		return result.reverse().toList(", ");
 	}
 
 	Geo function setLatLong(required numeric lat, required numeric lng) {

@@ -12,6 +12,7 @@
 		$("#location_admin2").val('');
 		$("#location_city").val('');
 		var place = autocomplete.getPlace();
+		input.data( "clearedvalue", input.val() );
 		if (place.address_components != undefined) {
 			place.address_components.forEach(function(component){
 				if (component.types.includes("country")) {
@@ -59,7 +60,7 @@
 			});
 		}
 
-		var addHTML = $('<div class="multiplacevalues list-group-item"><a href="#" class="removeable pull-right"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + placeString.val() + '</div>');
+		var addHTML = $('<div class="multiplacevalues list-group-item"><a href="#" class="removeable float-end"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + placeString.val() + '</div>');
 		addHTML.append(placeString).append(country).append(admin1).append(admin2).append(city);
 		valwrapper.append(addHTML);
 		input.val('');
@@ -78,6 +79,18 @@
 		if (!$("#location_country").val().length) {
 			input.val('');
 		}
+		else if (input.data('clearedvalue').length) {
+			input.val( input.data('clearedvalue') );
+		}
+	}
+
+	function clearentry(e) {
+		if (isMultiple)
+			return;
+
+		input
+			.data("clearedvalue",input.val())
+			.val('');
 	}
 
 	// Avoid paying for data that you don't need by restricting the set of
@@ -97,5 +110,6 @@
 
 	$(document).on("click.autocompleteplacesremove","a.removeable",removePlace);
 	$(document).on("blur.autocompleteplaces","#location_picker",validate);
+	$(document).on("focus.autocompleteplaces","#location_picker",clearentry);
 
 })(window.jQuery);

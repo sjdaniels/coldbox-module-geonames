@@ -1,6 +1,5 @@
 (function ($) {
 
-	var wrapper = $('#autocompleteaddress_wrapper');
 	var input = $('#location_picker');
 	var types = $('#location_picker').data("allowregions") ? ["geocode"] : ["address"];
 	var autocomplete = new google.maps.places.Autocomplete(input.get(0), { types: types });
