@@ -58,6 +58,8 @@
 		#view(view:"_form_bs/hidden",args:{name:"admin1",id:"location_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
 		#view(view:"_form_bs/hidden",args:{name:"admin2",id:"location_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#
 		#view(view:"_form_bs/hidden",args:{name:"city",id:"location_city",value:event.getValue("city",args.geo.getCity()?:"")})#
+		#view(view:"_form_bs/hidden",args:{name:"countrycode",id:"location_countrycode",value:event.getValue("countrycode","")})#
+		#view(view:"_form_bs/hidden",args:{name:"admin1code",id:"location_admin1code",value:event.getValue("admin1code","")})#
 	</cfif>
 <cfif args.multiple>
 	</div>

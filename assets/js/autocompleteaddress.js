@@ -11,7 +11,6 @@
 		$("#address_city").val('');
 		$("#address_street").val('');
 		var place = autocomplete.getPlace();
-		$.log(place);
 		if (place.address_components != undefined) {
 			place.address_components.reverse().forEach(function (component) {
 				if (component.types.includes("country")) {

@@ -17,10 +17,12 @@
 			place.address_components.forEach(function(component){
 				if (component.types.includes("country")) {
 					$("#location_country").val(component.long_name);
+					$("#location_countrycode").val(component.short_name);
 					$.log("Country: " + component.long_name);
 				}
 				else if (component.types.includes("administrative_area_level_1")) {
 					$("#location_admin1").val(component.long_name);
+					$("#location_admin1code").val(component.short_name);
 					$.log("State/Province: " + component.long_name);
 				}
 				else if (component.types.includes("administrative_area_level_2")) {
