@@ -71,8 +71,8 @@
 </script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=#args.apiKey#&libraries=places&callback=initMap" defer></script>
 <cfif settingExists("appBuild")>
-	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteplaces.#getSetting('appBuild')#.js" defer></script>
+	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteplaces.min.#getSetting('appBuild')#.js" defer></script>
 <cfelse>
-	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteplaces.js" defer></script>
+	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteplaces.min.js" defer></script>
 </cfif>
 </cfoutput>

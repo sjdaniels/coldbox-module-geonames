@@ -48,8 +48,8 @@
 </script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=#args.apiKey#&libraries=places&callback=initMap" defer></script>
 <cfif settingExists("appBuild")>
-	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteaddress.#getSetting('appBuild')#.js" defer></script>
+	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteaddress.min.#getSetting('appBuild')#.js" defer></script>
 <cfelse>
-	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteaddress.js" defer></script>
+	<script type="text/javascript" src="#event.getModuleRoot('geonames')#/assets/js/autocompleteaddress.min.js" defer></script>
 </cfif>
 </cfoutput>
