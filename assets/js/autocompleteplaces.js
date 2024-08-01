@@ -1,5 +1,7 @@
 (function($) {
 
+	// use Command Pallette > Minify function to minify when you update!
+
 	var wrapper = $('#autocompleteplaces_wrapper');
 	var valwrapper = $('#multiplacevalues_wrapper');
 	var input = $('#location_picker');
@@ -35,6 +37,8 @@
 				}
 			});
 		}
+
+		input.trigger("autocompleteplaces_placepicked");
 	}
 
 	function onPlaceAdd() {
