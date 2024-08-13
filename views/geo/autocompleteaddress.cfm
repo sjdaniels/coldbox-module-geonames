@@ -22,7 +22,7 @@
 		// ,6252001 // Test USA
 	];
 
-	if (blockedCountries.find(getInstance("geoIP2@geoIP").lookup(cgi.remote_addr).getCountryGeoID()?:6252001)) {
+	if (args.fallback && blockedCountries.find(getInstance("geoIP2@geoIP").lookup(cgi.remote_addr).getCountryGeoID()?:6252001)) {
 		if (!args.fallback)
 			return;
 
