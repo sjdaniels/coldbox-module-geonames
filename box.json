@@ -1,0 +1,26 @@
+{
+    "name":"GeoNames Module",
+    "version":"1.1.0+0001",
+    "author":"Sean Daniels <sdaniels@padawan.net>",
+    "homepage":"https://github.com/sjdaniels/coldbox-module-geonames",
+    "documentation":"https://github.com/sjdaniels/coldbox-module-geonames/blob/master/README.md",
+    "repository":{
+        "type":"git",
+        "URL":"https://github.com/sjdaniels/coldbox-module-geonames.git"
+    },
+    "slug":"geonames",
+    "shortDescription":"ActiveEntity-like interface and utils for MongoDB collections",
+    "type":"modules",
+    "packageDirectory":"geonames",
+    "private":true,
+    "engines":[
+        {
+            "type":"lucee",
+            "version":">4.5"
+        },
+        {
+            "type":"adobe",
+            "version":">9.02"
+        }
+    ]
+}
