@@ -23,20 +23,20 @@
 	}
 </cfscript>
 <cfoutput>
-<div class="row mb-3 geo-selectregion">
+<div class="row my-4 geo-selectregion">
 	<label for="region" class="col-form-label text-sm-end col-sm-#args.widthsplit[1]#">#args.label#</label>
 	<div class="col-sm-#args.widthsplit[2]#">
 		<div id="countries" class="mb-1">
-			#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"countryID", options:getInstance("RegionService@geonames").getCountryOptions(lang:getFwLang(), select:args.subsetcountries, withpreferred:args.withpreferred), default:selectedcountry})#
+			#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"countryID", options:getInstance("RegionService@geonames").getCountryOptions(lang:getFwLang(), select:args.subsetcountries, withpreferred:args.withpreferred), default:selectedcountry, omitWrapper:true})#
 		</div>
 		<cfloop array="#args.countriesRequireAdmin#" item="country">
 			<div class="#selectedcountry==country?'':'inithidden'# row-space-1 geo-subselect geo-#country#">
-				#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"admin1_#country#", options:getInstance("RegionService@geonames").getAdminOptions(getFwLang(), country), default:event.getValue("admin1_#country#",args.geo.getID()?:"")})#
+				#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"admin1_#country#", options:getInstance("RegionService@geonames").getAdminOptions(getFwLang(), country), default:event.getValue("admin1_#country#",args.geo.getID()?:""), omitWrapper:true})#
 			</div>
 		</cfloop>
 		<cfif args.subsetcountries>
 			<div class="#selectedcountry=='other'?'':'inithidden'# row-space-1 geo-subselect geo-other">
-				#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"continentID", options:getInstance("RegionService@geonames").getContinentOptions(getFwLang()), default:event.getValue("continentID",args.geo.getID()?:"")})#
+				#renderview(view:"_form_bs/select", args:{widthsplit:"", name:"continentID", options:getInstance("RegionService@geonames").getContinentOptions(getFwLang()), default:event.getValue("continentID",args.geo.getID()?:""), omitWrapper:true})#
 			</div>
 		</cfif>
 	</div>
