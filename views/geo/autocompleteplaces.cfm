@@ -9,7 +9,7 @@
 	param name="args.apiKey" default="#getSetting('googleapis').apiKey#";
 	param name="args.multiple" default="false";
 	param name="args.fallback" default="true";
-	param name="args.omitWrapper" default="false";
+	param name="args.formrow" default="true";
 
 	// Google Maps Platform Prohibited Territories 
 	// https://cloud.google.com/maps-platform/terms/maps-prohibited-territories
@@ -35,7 +35,7 @@
 <cfif args.multiple>
 	<div id="autocompleteplaces_wrapper" data-multiple="#args.multiple#">
 </cfif>
-	#view(view:"_form_bs/input",args:{widthsplit:args.widthsplit, name:"#args.multiple?'placeTextEntry':'placeString'#", id:"location_picker", help:args.help, label:args.label, placeholder:args.placeholder, isrequired:args.isrequired, default:args.multiple?"":event.getValue("placeString",args.geo.getPlaceString()?:""), omitWrapper:args.omitWrapper})#
+	#view(view:"_form_bs/input",args:{widthsplit:args.widthsplit, name:"#args.multiple?'placeTextEntry':'placeString'#", id:"location_picker", help:args.help, label:args.label, placeholder:args.placeholder, isrequired:args.isrequired, default:args.multiple?"":event.getValue("placeString",args.geo.getPlaceString()?:""), formrow:args.formrow})#
 	<cfif args.multiple>
 		<div class="row">
 			<div class="col-sm-#listlast(args.widthsplit,'/')# offset-sm-#listfirst(args.widthsplit,'/')#">

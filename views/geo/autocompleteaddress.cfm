@@ -8,7 +8,7 @@
 	param name="args.apiKey" default="#getSetting('googleapis').apiKey#";
 	param name="args.allowregions" default="false";
 	param name="args.fallback" default="true";
-	param name="args.omitWrapper" default="false";
+	param name="args.formrow" default="true";
 
 	// Google Maps Platform Prohibited Territories 
 	// https://cloud.google.com/maps-platform/terms/maps-prohibited-territories
@@ -33,7 +33,7 @@
 </cfscript>
 <cfoutput>
 <div id="autocompleteaddress_wrapper">
-	#view(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"placeString",id:"location_picker", help:args.help, label:args.label, data:{allowregions:args.allowregions}, placeholder:args.placeholder,isrequired:args.isrequired,default:event.getValue("placeString",args.geo.getPlaceString()?:""), omitWrapper:args.omitWrapper})#
+	#view(view:"_form_bs/input",args:{widthsplit:args.widthsplit,name:"placeString",id:"location_picker", help:args.help, label:args.label, data:{allowregions:args.allowregions}, placeholder:args.placeholder,isrequired:args.isrequired,default:event.getValue("placeString",args.geo.getPlaceString()?:""), formrow:args.formrow})#
 	#view(view:"_form_bs/hidden",args:{name:"country",id:"address_country",value:event.getValue("country",args.geo.getCountry()?:"")})#
 	#view(view:"_form_bs/hidden",args:{name:"admin1",id:"address_admin1",value:event.getValue("admin1",args.geo.getAdmin1()?:"")})#
 	#view(view:"_form_bs/hidden",args:{name:"admin2",id:"address_admin2",value:event.getValue("admin2",args.geo.getAdmin2()?:"")})#
