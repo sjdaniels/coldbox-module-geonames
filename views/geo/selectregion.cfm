@@ -9,7 +9,7 @@
 	param name="args.formrow" default="true";
 
 	args.widthsplit = args.widthsplit.listToArray("/");
-	if (!args.withsplit.isEmpty() && args.widthsplit[1] != 0) 
+	if (!args.widthsplit.isEmpty() && args.widthsplit[1] != 0) 
 		args.formrow = true;
 
 	if (!event.privateValueExists( "geoSelectRegionAssetsAdded" )) {
