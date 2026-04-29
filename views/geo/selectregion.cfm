@@ -6,8 +6,11 @@
 	param name="args.subsetcountries" default="false";
 	param name="args.countriesRequireAdmin" default="#[6252001,6251999,2635167]#";
 	param name="args.withpreferred" default="false";
+	param name="args.formrow" default="true";
 
 	args.widthsplit = args.widthsplit.listToArray("/");
+	if (!args.withsplit.isEmpty() && args.widthsplit[1] != 0) 
+		args.formrow = true;
 
 	if (!event.privateValueExists( "geoSelectRegionAssetsAdded" )) {
 		html.addAsset(asset:"#event.getModuleRoot('geonames')#/assets/js/selectregion.js", defer:true);
@@ -23,7 +26,7 @@
 	}
 </cfscript>
 <cfoutput>
-<div class="row my-4 geo-selectregion">
+<div class="row form-row geo-selectregion">
 	<label for="region" class="col-form-label text-sm-end col-sm-#args.widthsplit[1]#">#args.label#</label>
 	<div class="col-sm-#args.widthsplit[2]#">
 		<div id="countries" class="mb-1">
