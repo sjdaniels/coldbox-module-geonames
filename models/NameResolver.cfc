@@ -7,6 +7,7 @@ component singleton="true" {
 	property name="API" inject="API@geonames";
 	property name="GeoNamesService" inject="GeoNamesService@geonames";
 	property name="RegionService" inject="RegionService@geonames";
+	property name="cache" inject="cachebox:geoNamesCache";
 
 	function getNamesEntity() provider="Names@geonames" {}
 	function getNears() provider="Nears@geonames" {}
@@ -19,15 +20,23 @@ component singleton="true" {
 	function setupCollection() onDIComplete {
 		names = MongoDB.getCollection("geo_names")
 	}
-
-	struct function getGeo(required numeric geoID) {
-		arguments.geoID = javacast("numeric",arguments.geoID)
-		local.name = names.findOne({"_id":arguments.geoID})
-
-		if (isnull(local.name))
-			local.name = updateGeo(arguments.geoID)
 	
-		return local.name;
+	struct function getGeo(required numeric geoID) {
+		var geoID = javacast("int", arguments.geoID);
+		var cacheKey = "geoname_" & geoID;
+		
+		local.name = cache.get(cacheKey);
+		
+		if (isnull(local.name)) {
+			local.name = names.findOne({"_id": geoID});
+			
+			if (isnull(local.name))
+				local.name = updateGeo(geoID);
+			
+			cache.set(cacheKey, local.name);
+		}
+
+		return duplicate(local.name);
 	}
 
 	struct function getGeoPoint(required numeric geoID) {

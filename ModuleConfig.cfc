@@ -35,7 +35,29 @@ component {
 		var scanLocations = {"#moduleMapping#/models":expandpath("#moduleMapping#/models")}
 		var mapped = mapper.mapEntities( scanLocations );
 		var mongoentities = controller.getSetting( "mongoentities" );
+
+		controller.getCacheBox().createCache(
+			name       = "geoNamesCache",
+			provider   = "coldbox.system.cache.providers.CacheBoxProvider",
+			properties = {
+				maxObjects                    = 150000,
+				defaultTimeout                = 10080,
+				defaultLastAccessTimeout      = 1440,
+				reapFrequency                 = 60,
+				evictionPolicy                = "LRU",
+				evictCount                    = 500,
+				freeMemoryPercentageThreshold = 15,
+				objectStore                   = "coldbox.system.cache.store.ConcurrentSoftReferenceStore"
+			}
+		);
+		
 		mongoentities.append(mapped, true);
 		controller.setSetting("mongoentities", mongoentities);
 	}
+
+	function onUnload(){
+		if( controller.getCacheBox().cacheExists("geoNamesCache") ){
+			controller.getCacheBox().removeCache("geoNamesCache");
+		}
+	}	
 }

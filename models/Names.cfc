@@ -22,6 +22,7 @@ component output="false" entityname="GeoNames" collection="geo_names" extends="m
 	property name="countryCode" type="string"; // iso country code 
 
 	property name="i18n" inject="i18n@cbi18n" persist="false";
+	property name="NameResolver" inject="NameResolver@geonames" persist="false";
 
 	public ActiveEntity function init(){
 		super.init();
@@ -226,7 +227,7 @@ component output="false" entityname="GeoNames" collection="geo_names" extends="m
 				result = this.getAscii(); // so we get the version with "County" appended
 
 			if (["US","CA"].find(this.getCountryCode())) {
-				local.parent = this.getCollection().findOne( {"_id":this.getPath()[4]} );
+				local.parent = NameResolver.getGeo(this.getPath()[4]);
 				return result & ", " & (local.parent.abbr ?: (local.parent.name[arguments.lang] ?: local.parent.name["en"]));
 			}
 			return result & ", " & this.getNameByType("country",arguments.lang);
