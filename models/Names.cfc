@@ -233,5 +233,7 @@ component output="false" entityname="GeoNames" collection="geo_names" extends="m
 			return result & ", " & this.getNameByType("country",arguments.lang);
 		}
 
+		// unrecognized type - fall back to the plain name rather than returning null
+		return result;
 	}
 }
