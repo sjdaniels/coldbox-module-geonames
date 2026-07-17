@@ -6,17 +6,12 @@
 
 	var orig = document.getElementById('location_picker');
 
-	if (!orig || !(window.google && google.maps && google.maps.importLibrary))
+	if (!orig)
 		return;
 
 	var $orig = $(orig);
 	var allowRegions = $orig.data("allowregions");
 	var placeholder = orig.getAttribute("placeholder") || "";
-
-	// Keep the Bootstrap input as a hidden mirror (still posts name="placeString")
-	// and move #location_picker onto the new element -- see autocompleteplaces.js.
-	orig.id = "location_picker_value";
-	orig.type = "hidden";
 
 	function apply(place) {
 		$("#address_country").val('');
@@ -46,7 +41,7 @@
 		$orig.val(place.formattedAddress || "");
 	}
 
-	google.maps.importLibrary("places").then(function (places) {
+	function init(places) {
 		var pac = new places.PlaceAutocompleteElement({
 			// Legacy: {types:["geocode"]} for regions, {types:["address"]} otherwise.
 			includedPrimaryTypes: allowRegions ? ["geocode"] : ["address"]
@@ -56,10 +51,14 @@
 		pac.style.width = "100%";
 		if (placeholder) pac.placeholder = placeholder;
 
+		// Keep the Bootstrap input as a hidden mirror (still posts name="placeString")
+		// and move #location_picker onto the new element -- see autocompleteplaces.js.
+		var saved = orig.value;
+		orig.id = "location_picker_value";
+		orig.type = "hidden";
 		orig.parentNode.insertBefore(pac, orig.nextSibling);
-
-		if (orig.value) {
-			try { pac.value = orig.value; } catch (e) {}
+		if (saved) {
+			try { pac.value = saved; } catch (e) {}
 		}
 
 		pac.addEventListener("gmp-select", function (event) {
@@ -72,6 +71,26 @@
 		pac.addEventListener("keydown", function (e) {
 			if (e.keyCode === 13) e.preventDefault();
 		});
+	}
+
+	// The Maps loader uses loading=async, so google.maps.importLibrary may not be
+	// defined at the instant this deferred script runs. Wait for it rather than
+	// silently bailing out.
+	whenMapsReady(function () {
+		google.maps.importLibrary("places").then(init);
 	});
+
+	function whenMapsReady(cb) {
+		if (window.google && google.maps && google.maps.importLibrary) return cb();
+		var waited = 0;
+		var iv = setInterval(function () {
+			if (window.google && google.maps && google.maps.importLibrary) {
+				clearInterval(iv);
+				cb();
+			} else if ((waited += 50) >= 10000) {
+				clearInterval(iv);
+			}
+		}, 50);
+	}
 
 })(window.jQuery);

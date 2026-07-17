@@ -8,21 +8,12 @@
 	var valwrapper = $('#multiplacevalues_wrapper');
 	var orig = document.getElementById('location_picker');
 
-	if (!orig || !(window.google && google.maps && google.maps.importLibrary))
+	if (!orig)
 		return;
 
 	var $orig = $(orig);
 	var isMultiple = wrapper.data("multiple");
-
-	// The new element renders its own <input>, so it can't decorate the Bootstrap
-	// input in place. We keep the original input as a hidden mirror -- it still
-	// posts its value (single mode -> name="placeString") and keeps the geo hidden
-	// fields intact -- and move the #location_picker id onto the new element so the
-	// app-side hooks that target #location_picker (navsearch show/hide, filters-bar
-	// delegated event) keep working.
 	var placeholder = orig.getAttribute("placeholder") || "";
-	orig.id = "location_picker_value";
-	orig.type = "hidden";
 
 	function mapComponents(components) {
 		var f = { country: "", countrycode: "", admin1: "", admin1code: "", admin2: "", city: "" };
@@ -46,7 +37,7 @@
 		valwrapper.append(row);
 	}
 
-	google.maps.importLibrary("places").then(function (places) {
+	function init(places) {
 		var pac = new places.PlaceAutocompleteElement({
 			// "(regions)" is the type collection that replaces the legacy {types:["(regions)"]}.
 			includedPrimaryTypes: ["(regions)"]
@@ -56,11 +47,18 @@
 		pac.style.width = "100%";
 		if (placeholder) pac.placeholder = placeholder;
 
+		// The new element renders its own <input>, so it can't decorate the Bootstrap
+		// input in place. Keep the original input as a hidden mirror -- it still posts
+		// its value (single mode -> name="placeString") and keeps the geo hidden fields
+		// intact -- and move the #location_picker id onto the new element so app-side
+		// hooks that target #location_picker (navsearch show/hide, filters-bar delegated
+		// event) keep working. Prefill the element from the mirror on edit forms.
+		var saved = orig.value;
+		orig.id = "location_picker_value";
+		orig.type = "hidden";
 		orig.parentNode.insertBefore(pac, orig.nextSibling);
-
-		// Prefill the visible element on edit forms from the mirror's saved value.
-		if (!isMultiple && orig.value) {
-			try { pac.value = orig.value; } catch (e) {}
+		if (!isMultiple && saved) {
+			try { pac.value = saved; } catch (e) {}
 		}
 
 		pac.addEventListener("gmp-select", function (event) {
@@ -89,7 +87,27 @@
 		pac.addEventListener("keydown", function (e) {
 			if (e.keyCode === 13) e.preventDefault();
 		});
+	}
+
+	// The Maps loader uses loading=async, so google.maps.importLibrary may not be
+	// defined at the instant this deferred script runs. Wait for it rather than
+	// silently bailing out.
+	whenMapsReady(function () {
+		google.maps.importLibrary("places").then(init);
 	});
+
+	function whenMapsReady(cb) {
+		if (window.google && google.maps && google.maps.importLibrary) return cb();
+		var waited = 0;
+		var iv = setInterval(function () {
+			if (window.google && google.maps && google.maps.importLibrary) {
+				clearInterval(iv);
+				cb();
+			} else if ((waited += 50) >= 10000) {
+				clearInterval(iv);
+			}
+		}, 50);
+	}
 
 	function removePlace(e) {
 		$(this).closest('.multiplacevalues').remove();
