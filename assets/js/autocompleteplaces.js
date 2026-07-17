@@ -1,121 +1,101 @@
-(function($) {
+(function ($) {
 
-	// use Command Pallette > Minify function to minify when you update!
+	// Migrated from google.maps.places.Autocomplete (deprecated for new customers 2025-03-01)
+	// to google.maps.places.PlaceAutocompleteElement.
+	// Re-minify after editing:  npx terser autocompleteplaces.js -c -m -o autocompleteplaces.min.js
 
 	var wrapper = $('#autocompleteplaces_wrapper');
 	var valwrapper = $('#multiplacevalues_wrapper');
-	var input = $('#location_picker');
-	var autocomplete = new google.maps.places.Autocomplete(input.get(0), {types: ["(regions)"] });
+	var orig = document.getElementById('location_picker');
+
+	if (!orig || !(window.google && google.maps && google.maps.importLibrary))
+		return;
+
+	var $orig = $(orig);
 	var isMultiple = wrapper.data("multiple");
 
-	function onPlaceChange() {
-		$("#location_country").val('');
-		$("#location_admin1").val('');
-		$("#location_admin2").val('');
-		$("#location_city").val('');
-		var place = autocomplete.getPlace();
-		input.data( "clearedvalue", input.val() );
-		if (place.address_components != undefined) {
-			place.address_components.forEach(function(component){
-				if (component.types.includes("country")) {
-					$("#location_country").val(component.long_name);
-					$("#location_countrycode").val(component.short_name);
-					$.log("Country: " + component.long_name);
-				}
-				else if (component.types.includes("administrative_area_level_1")) {
-					$("#location_admin1").val(component.long_name);
-					$("#location_admin1code").val(component.short_name);
-					$.log("State/Province: " + component.long_name);
-				}
-				else if (component.types.includes("administrative_area_level_2")) {
-					$("#location_admin2").val(component.long_name);
-					$.log("County: " + component.long_name);
-				}
-				else if (component.types.includes("locality")) {
-					$("#location_city").val(component.long_name);
-					$.log("City: " + component.long_name);
-				}
-			});
-		}
+	// The new element renders its own <input>, so it can't decorate the Bootstrap
+	// input in place. We keep the original input as a hidden mirror -- it still
+	// posts its value (single mode -> name="placeString") and keeps the geo hidden
+	// fields intact -- and move the #location_picker id onto the new element so the
+	// app-side hooks that target #location_picker (navsearch show/hide, filters-bar
+	// delegated event) keep working.
+	var placeholder = orig.getAttribute("placeholder") || "";
+	orig.id = "location_picker_value";
+	orig.type = "hidden";
 
-		input.trigger("autocompleteplaces_placepicked");
+	function mapComponents(components) {
+		var f = { country: "", countrycode: "", admin1: "", admin1code: "", admin2: "", city: "" };
+		(components || []).forEach(function (c) {
+			if (c.types.indexOf("country") !== -1) { f.country = c.longText; f.countrycode = c.shortText; }
+			else if (c.types.indexOf("administrative_area_level_1") !== -1) { f.admin1 = c.longText; f.admin1code = c.shortText; }
+			else if (c.types.indexOf("administrative_area_level_2") !== -1) { f.admin2 = c.longText; }
+			else if (c.types.indexOf("locality") !== -1) { f.city = c.longText; }
+		});
+		return f;
 	}
 
-	function onPlaceAdd() {
-		var placeString = $('<input type="hidden" name="placeString[]">');
-		var country = $('<input type="hidden" name="country[]">');
-		var admin1 = $('<input type="hidden" name="admin1[]">');
-		var admin2 = $('<input type="hidden" name="admin2[]">');
-		var city = $('<input type="hidden" name="city[]">');
-		var place = autocomplete.getPlace();
-		placeString.val( input.val() );
-		if (place.address_components != undefined) {
-			place.address_components.forEach(function(component){
-				if (component.types.includes("country")) {
-					country.val(component.long_name);
-				}
-				else if (component.types.includes("administrative_area_level_1")) {
-					admin1.val(component.long_name);
-				}
-				else if (component.types.includes("administrative_area_level_2")) {
-					admin2.val(component.long_name);
-				}
-				else if (component.types.includes("locality")) {
-					city.val(component.long_name);
-				}
-			});
+	function addPlaceRow(text, f) {
+		var row = $('<div class="multiplacevalues list-group-item"><a href="#" class="removeable float-end"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + text + '</div>');
+		row
+			.append($('<input type="hidden" name="placeString[]">').val(text))
+			.append($('<input type="hidden" name="country[]">').val(f.country))
+			.append($('<input type="hidden" name="admin1[]">').val(f.admin1))
+			.append($('<input type="hidden" name="admin2[]">').val(f.admin2))
+			.append($('<input type="hidden" name="city[]">').val(f.city));
+		valwrapper.append(row);
+	}
+
+	google.maps.importLibrary("places").then(function (places) {
+		var pac = new places.PlaceAutocompleteElement({
+			// "(regions)" is the type collection that replaces the legacy {types:["(regions)"]}.
+			includedPrimaryTypes: ["(regions)"]
+		});
+		pac.id = "location_picker";
+		pac.className = "place-autocomplete-input";
+		pac.style.width = "100%";
+		if (placeholder) pac.placeholder = placeholder;
+
+		orig.parentNode.insertBefore(pac, orig.nextSibling);
+
+		// Prefill the visible element on edit forms from the mirror's saved value.
+		if (!isMultiple && orig.value) {
+			try { pac.value = orig.value; } catch (e) {}
 		}
 
-		var addHTML = $('<div class="multiplacevalues list-group-item"><a href="#" class="removeable float-end"><i class="fas fa-times-square"></i></a><i class="fas fa-fw fa-map-marker-alt"></i> ' + placeString.val() + '</div>');
-		addHTML.append(placeString).append(country).append(admin1).append(admin2).append(city);
-		valwrapper.append(addHTML);
-		input.val('');
-	}
+		pac.addEventListener("gmp-select", function (event) {
+			var place = event.placePrediction.toPlace();
+			place.fetchFields({ fields: ["addressComponents", "formattedAddress", "displayName"] }).then(function () {
+				var text = place.formattedAddress || place.displayName || "";
+				var f = mapComponents(place.addressComponents);
+
+				if (isMultiple) {
+					addPlaceRow(text, f);
+					try { pac.value = ""; } catch (e) {}
+				} else {
+					$orig.val(text);
+					$("#location_country").val(f.country);
+					$("#location_countrycode").val(f.countrycode);
+					$("#location_admin1").val(f.admin1);
+					$("#location_admin1code").val(f.admin1code);
+					$("#location_admin2").val(f.admin2);
+					$("#location_city").val(f.city);
+					$(pac).trigger("autocompleteplaces_placepicked");
+				}
+			});
+		});
+
+		// Keep the legacy behaviour of not letting Enter submit the surrounding form.
+		pac.addEventListener("keydown", function (e) {
+			if (e.keyCode === 13) e.preventDefault();
+		});
+	});
 
 	function removePlace(e) {
-		var $thisvaluewrapper = $(this).parent('.multiplacevalues');
-		$thisvaluewrapper.remove();
+		$(this).closest('.multiplacevalues').remove();
 		e.preventDefault();
 	}
 
-	function validate(e) {
-		if (isMultiple)
-			return;
-
-		if (!$("#location_country").val().length) {
-			input.val('');
-		}
-		else if (input.data('clearedvalue').length) {
-			input.val( input.data('clearedvalue') );
-		}
-	}
-
-	function clearentry(e) {
-		if (isMultiple)
-			return;
-
-		input
-			.data("clearedvalue",input.val())
-			.val('');
-	}
-
-	// Avoid paying for data that you don't need by restricting the set of
-	// place fields that are returned to just the address components.
-	autocomplete.setFields(['address_component','place_id','geometry']);
-
-	// When the user selects an address from the drop-down, populate the
-	// address fields in the form.
-	autocomplete.addListener('place_changed', isMultiple ? onPlaceAdd : onPlaceChange);
-
-	$(document).on("keydown.autocompleteplaces","#location_picker",function(e){
-		if(e.keyCode == 13) {
-			e.preventDefault();
-			return false;
-		}
-	});
-
-	$(document).on("click.autocompleteplacesremove","a.removeable",removePlace);
-	$(document).on("blur.autocompleteplaces","#location_picker",validate);
-	$(document).on("focus.autocompleteplaces","#location_picker",clearentry);
+	$(document).on("click.autocompleteplacesremove", "a.removeable", removePlace);
 
 })(window.jQuery);
