@@ -46,8 +46,10 @@
 
 	function init(places) {
 		var pac = new places.PlaceAutocompleteElement({
-			// Legacy: {types:["geocode"]} for regions, {types:["address"]} otherwise.
-			includedPrimaryTypes: allowRegions ? ["geocode"] : ["address"]
+			// Legacy {types:["geocode"]} for regions; otherwise restrict to street
+			// addresses. ("address" was a legacy-only type collection -- the new API
+			// rejects it with "Invalid included_primary_types"; use "street_address".)
+			includedPrimaryTypes: allowRegions ? ["geocode"] : ["street_address"]
 		});
 		pac.id = "location_picker";
 		pac.className = "place-autocomplete-input";
