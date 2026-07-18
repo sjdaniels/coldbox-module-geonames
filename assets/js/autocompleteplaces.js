@@ -44,7 +44,6 @@
 		});
 		pac.id = "location_picker";
 		pac.className = "place-autocomplete-input";
-		pac.style.width = "100%";
 		if (placeholder) pac.placeholder = placeholder;
 
 		// The new element renders its own <input>, so it can't decorate the Bootstrap
@@ -83,9 +82,31 @@
 			});
 		});
 
-		// Keep the legacy behaviour of not letting Enter submit the surrounding form.
+		// When the field is emptied, drop the stored selection so a stale place isn't
+		// posted or re-prefilled on a form error.
+		if (!isMultiple) {
+			var clearGeoIfEmpty = function () {
+				if (pac.value) return;
+				$orig.val("");
+				$("#location_country").val("");
+				$("#location_countrycode").val("");
+				$("#location_admin1").val("");
+				$("#location_admin1code").val("");
+				$("#location_admin2").val("");
+				$("#location_city").val("");
+			};
+			// Manual delete fires input; the built-in clear (X) button does not, so
+			// also re-check after any click inside the element.
+			pac.addEventListener("input", clearGeoIfEmpty);
+			pac.addEventListener("click", function () { setTimeout(clearGeoIfEmpty, 0); });
+		}
+
 		pac.addEventListener("keydown", function (e) {
-			if (e.keyCode === 13) e.preventDefault();
+			// Let the element own suggestion navigation AND Enter-to-select; just keep
+			// the Bootstrap dropdown's keydown handler from hijacking those keys when
+			// the picker is inside a menu. (Do NOT preventDefault Enter -- that blocks
+			// the element's own keyboard selection.)
+			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") e.stopPropagation();
 		});
 	}
 

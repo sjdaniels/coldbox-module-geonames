@@ -48,7 +48,6 @@
 		});
 		pac.id = "location_picker";
 		pac.className = "place-autocomplete-input";
-		pac.style.width = "100%";
 		if (placeholder) pac.placeholder = placeholder;
 
 		// Keep the Bootstrap input as a hidden mirror (still posts name="placeString")
@@ -68,8 +67,30 @@
 			});
 		});
 
+		// When the field is emptied, drop the stored selection so a stale address
+		// isn't posted or re-prefilled on a form error.
+		var clearAddrIfEmpty = function () {
+			if (pac.value) return;
+			$orig.val("");
+			$("#address_country").val("");
+			$("#address_admin1").val("");
+			$("#address_admin2").val("");
+			$("#address_city").val("");
+			$("#address_street").val("");
+			$("#address_lat").val("");
+			$("#address_lng").val("");
+		};
+		// Manual delete fires input; the built-in clear (X) button does not, so
+		// also re-check after any click inside the element.
+		pac.addEventListener("input", clearAddrIfEmpty);
+		pac.addEventListener("click", function () { setTimeout(clearAddrIfEmpty, 0); });
+
 		pac.addEventListener("keydown", function (e) {
-			if (e.keyCode === 13) e.preventDefault();
+			// Let the element own suggestion navigation AND Enter-to-select; just keep
+			// the Bootstrap dropdown's keydown handler from hijacking those keys when
+			// the picker is inside a menu. (Do NOT preventDefault Enter -- that blocks
+			// the element's own keyboard selection.)
+			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") e.stopPropagation();
 		});
 	}
 
