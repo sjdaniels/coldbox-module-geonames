@@ -1,70 +1,123 @@
 (function ($) {
 
-	var input = $('#location_picker');
-	var types = $('#location_picker').data("allowregions") ? ["geocode"] : ["address"];
-	var autocomplete = new google.maps.places.Autocomplete(input.get(0), { types: types });
+	// Migrated from google.maps.places.Autocomplete (deprecated for new customers 2025-03-01)
+	// to google.maps.places.PlaceAutocompleteElement.
+	// Re-minify after editing:  npx terser autocompleteaddress.js -c -m -o autocompleteaddress.min.js
 
-	function onPlaceChange() {
+	var orig = document.getElementById('location_picker');
+
+	if (!orig)
+		return;
+
+	var $orig = $(orig);
+	var allowRegions = $orig.data("allowregions");
+	var placeholder = orig.getAttribute("placeholder") || "";
+
+	function apply(place) {
 		$("#address_country").val('');
 		$("#address_admin1").val('');
 		$("#address_admin2").val('');
 		$("#address_city").val('');
 		$("#address_street").val('');
-		var place = autocomplete.getPlace();
-		if (place.address_components != undefined) {
-			place.address_components.reverse().forEach(function (component) {
-				if (component.types.includes("country")) {
-					$("#address_country").val(component.long_name);
-					$.log("Country: " + component.long_name);
-				}
-				else if (component.types.includes("administrative_area_level_1")) {
-					$("#address_admin1").val(component.long_name);
-					$.log("State/Province: " + component.long_name);
-				}
-				else if (component.types.includes("administrative_area_level_2")) {
-					$("#address_admin2").val(component.long_name);
-					$.log("County: " + component.long_name);
-				}
-				else if (component.types.includes("locality")) {
-					$("#address_city").val(component.long_name);
-					$.log("City: " + component.long_name);
-				}
-				else if (component.types.includes("route")) {
-					$("#address_street").val(component.long_name);
-					$.log("Street: " + component.long_name);
-				}
-				else if (component.types.includes("street_number")) {
-					$("#address_street").val(component.long_name + ' ' + $("#address_street").val());
-					$.log("Street Number: " + component.long_name);
-				}
+
+		var streetNumber = "", route = "";
+		(place.addressComponents || []).forEach(function (c) {
+			if (c.types.indexOf("country") !== -1) $("#address_country").val(c.longText);
+			else if (c.types.indexOf("administrative_area_level_1") !== -1) $("#address_admin1").val(c.longText);
+			else if (c.types.indexOf("administrative_area_level_2") !== -1) $("#address_admin2").val(c.longText);
+			else if (c.types.indexOf("locality") !== -1) $("#address_city").val(c.longText);
+			else if (c.types.indexOf("route") !== -1) route = c.longText;
+			else if (c.types.indexOf("street_number") !== -1) streetNumber = c.longText;
+		});
+
+		var street = ((streetNumber ? streetNumber + " " : "") + route).trim();
+		if (street) $("#address_street").val(street);
+
+		if (place.location) {
+			$("#address_lat").val(place.location.lat());
+			$("#address_lng").val(place.location.lng());
+		}
+
+		$orig.val(place.formattedAddress || "");
+		// jQuery .val() doesn't fire events; emit change on the posting field so
+		// host-form change/dirty detection sees it.
+		$orig.trigger("change");
+	}
+
+	function init(places) {
+		var pac = new places.PlaceAutocompleteElement({
+			// Legacy {types:["geocode"]} for regions; otherwise restrict to street
+			// addresses. ("address" was a legacy-only type collection -- the new API
+			// rejects it with "Invalid included_primary_types"; use "street_address".)
+			includedPrimaryTypes: allowRegions ? ["geocode"] : ["street_address"]
+		});
+		pac.id = "location_picker";
+		pac.className = "place-autocomplete-input";
+		if (placeholder) pac.placeholder = placeholder;
+
+		// Keep the Bootstrap input as a hidden mirror (still posts name="placeString")
+		// and move #location_picker onto the new element -- see autocompleteplaces.js.
+		var saved = orig.value;
+		orig.id = "location_picker_value";
+		orig.type = "hidden";
+		orig.parentNode.insertBefore(pac, orig.nextSibling);
+		if (saved) {
+			try { pac.value = saved; } catch (e) {}
+		}
+
+		pac.addEventListener("gmp-select", function (event) {
+			var place = event.placePrediction.toPlace();
+			place.fetchFields({ fields: ["addressComponents", "formattedAddress", "location"] }).then(function () {
+				apply(place);
 			});
+		});
 
-			$("#address_lat").val(place.geometry.location.lat());
-			$("#address_lng").val(place.geometry.location.lng());
-		}
+		// When the field is emptied, drop the stored selection so a stale address
+		// isn't posted or re-prefilled on a form error.
+		var clearAddrIfEmpty = function () {
+			if (pac.value) return;
+			$orig.val("");
+			$("#address_country").val("");
+			$("#address_admin1").val("");
+			$("#address_admin2").val("");
+			$("#address_city").val("");
+			$("#address_street").val("");
+			$("#address_lat").val("");
+			$("#address_lng").val("");
+			$orig.trigger("change");
+		};
+		// Manual delete fires input; the built-in clear (X) button does not, so
+		// also re-check after any click inside the element.
+		pac.addEventListener("input", clearAddrIfEmpty);
+		pac.addEventListener("click", function () { setTimeout(clearAddrIfEmpty, 0); });
+
+		pac.addEventListener("keydown", function (e) {
+			// Let the element own suggestion navigation AND Enter-to-select; just keep
+			// the Bootstrap dropdown's keydown handler from hijacking those keys when
+			// the picker is inside a menu. (Do NOT preventDefault Enter -- that blocks
+			// the element's own keyboard selection.)
+			if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") e.stopPropagation();
+		});
 	}
 
-	function validate(e) {
-		if (!$("#address_country").val().length) {
-			input.val('');
-		}
-	}
-
-	// Avoid paying for data that you don't need by restricting the set of
-	// place fields that are returned to just the address components.
-	autocomplete.setFields(['address_component', 'place_id', 'geometry']);
-
-	// When the user selects an address from the drop-down, populate the
-	// address fields in the form.
-	autocomplete.addListener('place_changed', onPlaceChange);
-
-	$(document).on("keydown.autocompleteaddress", "#location_picker", function (e) {
-		if (e.keyCode == 13) {
-			e.preventDefault();
-			return false;
-		}
+	// The Maps loader uses loading=async, so google.maps.importLibrary may not be
+	// defined at the instant this deferred script runs. Wait for it rather than
+	// silently bailing out.
+	whenMapsReady(function () {
+		google.maps.importLibrary("places").then(init);
 	});
 
-	$(document).on("blur.autocompleteplaces", "#location_picker", validate);
+	function whenMapsReady(cb) {
+		if (window.google && google.maps && google.maps.importLibrary) return cb();
+		var waited = 0;
+		var iv = setInterval(function () {
+			if (window.google && google.maps && google.maps.importLibrary) {
+				clearInterval(iv);
+				cb();
+			} else if ((waited += 50) >= 10000) {
+				clearInterval(iv);
+			}
+		}, 50);
+	}
 
 })(window.jQuery);
