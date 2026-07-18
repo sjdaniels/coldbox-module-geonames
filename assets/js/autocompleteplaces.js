@@ -35,6 +35,7 @@
 			.append($('<input type="hidden" name="admin2[]">').val(f.admin2))
 			.append($('<input type="hidden" name="city[]">').val(f.city));
 		valwrapper.append(row);
+		$orig.trigger("change");
 	}
 
 	function init(places) {
@@ -77,6 +78,9 @@
 					$("#location_admin1code").val(f.admin1code);
 					$("#location_admin2").val(f.admin2);
 					$("#location_city").val(f.city);
+					// jQuery .val() doesn't fire events; emit change on the posting field so
+					// host-form change/dirty detection sees it.
+					$orig.trigger("change");
 					$(pac).trigger("autocompleteplaces_placepicked");
 				}
 			});
@@ -94,6 +98,7 @@
 				$("#location_admin1code").val("");
 				$("#location_admin2").val("");
 				$("#location_city").val("");
+				$orig.trigger("change");
 			};
 			// Manual delete fires input; the built-in clear (X) button does not, so
 			// also re-check after any click inside the element.
@@ -133,6 +138,7 @@
 	function removePlace(e) {
 		$(this).closest('.multiplacevalues').remove();
 		e.preventDefault();
+		$orig.trigger("change");
 	}
 
 	$(document).on("click.autocompleteplacesremove", "a.removeable", removePlace);

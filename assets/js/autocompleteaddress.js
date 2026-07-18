@@ -39,6 +39,9 @@
 		}
 
 		$orig.val(place.formattedAddress || "");
+		// jQuery .val() doesn't fire events; emit change on the posting field so
+		// host-form change/dirty detection sees it.
+		$orig.trigger("change");
 	}
 
 	function init(places) {
@@ -79,6 +82,7 @@
 			$("#address_street").val("");
 			$("#address_lat").val("");
 			$("#address_lng").val("");
+			$orig.trigger("change");
 		};
 		// Manual delete fires input; the built-in clear (X) button does not, so
 		// also re-check after any click inside the element.
