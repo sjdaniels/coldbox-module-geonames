@@ -6,12 +6,17 @@ component extends="coldbox.system.Interceptor" {
 
 	function preProcess() eventpattern="^geonames:" {
 		// logbox.getLogger(this).info("START: #event.getCurrentEvent()#@#getSetting('frontEndURL')#")
-        if (event.getValue("secretkey","") != getSetting("geonamesKey")) 
+		var expectedKey = getSetting(name:"geonamesKey", defaultValue:"");
+        if (!len(expectedKey) || compare(event.getValue("secretkey",""), expectedKey) != 0)
             event.overrideevent("geonames:main.noauth");
 	}
 
 	function preLayout() eventpattern="^geonames:" {
-        event.renderData(type:event.getValue(name:"contenttype",defaultValue:"JSON",private:true),data:event.getValue(name:"response",private:true))
+        event.renderData(
+			type:event.getValue(name:"contenttype",defaultValue:"JSON",private:true),
+			data:event.getValue(name:"response",private:true),
+			statusCode:event.getValue(name:"statusCode",defaultValue:200,private:true)
+		)
 	}
 
 }

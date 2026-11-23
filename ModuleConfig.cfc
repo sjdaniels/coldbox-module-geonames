@@ -18,9 +18,7 @@ component {
 		,	premiumUrl  = "http://ws.geonames.net"	
 		}
 
-		parentSettings = {
-			geonamesKey	= "istanbulnotconstantinople"
-		}
+		parentSettings = {};
 		
 		interceptors = [
 			{ class="#moduleMapping#.interceptors.Security", name="#this.title# Security" }

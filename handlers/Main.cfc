@@ -70,11 +70,12 @@ component output="false" {
     function autocompletecities(event,rc,prc) {
     	var cities = []
     	var AlertBox = getInstance("AlertBox@convertedplugins")
+		var query = createObject("java","java.util.regex.Pattern").quote(lcase(left(trim(rc.q?:""), 100)));
 
     	local.args = {
     		 "type":"city"
     		,"countryCode":rc.countryCode
-    		,"alternates.lower":{"$regex":"^#lcase(rc.q)#"}
+    		,"alternates.lower":{"$regex":"^#query#"}
     		,"alternates.lang":getSetting("lang")
 		}
 
@@ -96,7 +97,8 @@ component output="false" {
     }
 
 	function noauth(event,rc,prc) {
-        prc.response = {"error":"Invalid security key #event.getValue('secretkey','[no key provided!]')#."}
+        prc.response = {"error":"Invalid security key."};
+		prc.statusCode = 401;
     }
 
 }
